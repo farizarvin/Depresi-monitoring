@@ -1,0 +1,378 @@
+/* ===================================
+   JADWAL PAGE STYLES - SIMPLIFIED
+   =================================== */
+
+/* Summary Cards */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.summary-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.card-purple .summary-icon {
+    background: linear-gradient(135deg, #A855F7, #9333EA);
+}
+
+.card-blue .summary-icon {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.card-green .summary-icon {
+    background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.card-orange .summary-icon {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.summary-label {
+    font-size: 0.8125rem;
+    color: #6B7280;
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1E2939;
+    margin: 0;
+}
+
+.summary-desc {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    margin: 0;
+}
+
+/* Jadwal Section */
+.jadwal-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.section-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.day-badge {
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    color: #fff;
+    padding: 0.375rem 1rem;
+    border-radius: 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1E2939;
+    margin: 0;
+}
+
+/* Jadwal Grid & Card */
+.jadwal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.jadwal-card {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid transparent;
+}
+
+.jadwal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Color Variants */
+.jadwal-card.bg-blue {
+    background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+    border-color: #93C5FD;
+}
+
+.jadwal-card.bg-green {
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    border-color: #6EE7B7;
+}
+
+.jadwal-card.bg-purple {
+    background: linear-gradient(135deg, #E9D5FF, #D8B4FE);
+    border-color: #C084FC;
+}
+
+.jadwal-card.bg-cyan {
+    background: linear-gradient(135deg, #CFFAFE, #A5F3FC);
+    border-color: #67E8F9;
+}
+
+.jadwal-card.bg-teal {
+    background: linear-gradient(135deg, #CCFBF1, #99F6E4);
+    border-color: #5EEAD4;
+}
+
+.jadwal-card.bg-yellow {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    border-color: #FCD34D;
+}
+
+.jadwal-card.bg-pink-light,
+.jadwal-card.bg-pink {
+    background: linear-gradient(135deg, #FCE7F3, #FBCFE8);
+    border-color: #F9A8D4;
+}
+
+.jadwal-card.bg-lime {
+    background: linear-gradient(135deg, #ECFCCB, #D9F99D);
+    border-color: #BEF264;
+}
+
+.jadwal-card.bg-orange {
+    background: linear-gradient(135deg, #FED7AA, #FDBA74);
+    border-color: #FB923C;
+}
+
+/* Badge */
+.jadwal-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.badge-teori {
+    background: #6B7280;
+}
+
+.badge-lab {
+    background: #8B5CF6;
+}
+
+/* Jadwal Info */
+.jadwal-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1E2939;
+    margin: 0 0 0.25rem 0;
+}
+
+.jadwal-code {
+    font-size: 0.75rem;
+    color: #6B7280;
+    margin: 0 0 1rem 0;
+}
+
+.jadwal-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    color: #4B5563;
+}
+
+.jadwal-info:last-child {
+    margin-bottom: 0;
+}
+
+.jadwal-info i {
+    font-size: 1rem;
+    color: #6B7280;
+}
+
+/* Legend Section */
+.legend-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+}
+
+.legend-box {
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 1rem;
+    padding: 1.25rem;
+}
+
+.legend-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1E2939;
+    margin: 0 0 1rem 0;
+}
+
+.legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.legend-badge {
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.legend-badge.badge-teori {
+    background: #6B7280;
+}
+
+.legend-badge.badge-praktikum {
+    background: #3B82F6;
+}
+
+.legend-badge.badge-lab {
+    background: #8B5CF6;
+}
+
+.legend-text {
+    font-size: 0.8125rem;
+    color: #4B5563;
+}
+
+.legend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.legend-color-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.color-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.bg-blue-box {
+    background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+}
+
+.bg-green-box {
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+}
+
+.bg-purple-box {
+    background: linear-gradient(135deg, #E9D5FF, #D8B4FE);
+}
+
+.bg-pink-box {
+    background: linear-gradient(135deg, #FCE7F3, #FBCFE8);
+}
+
+.bg-cyan-box {
+    background: linear-gradient(135deg, #CFFAFE, #A5F3FC);
+}
+
+.bg-orange-box {
+    background: linear-gradient(135deg, #FED7AA, #FDBA74);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .summary-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .jadwal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .legend-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .legend-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .legend-box {
+        padding: 1rem;
+    }
+
+    .legend-title {
+        font-size: 0.875rem;
+    }
+}

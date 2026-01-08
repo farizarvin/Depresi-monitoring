@@ -1,0 +1,1 @@
+alias art="docker-compose exec app"

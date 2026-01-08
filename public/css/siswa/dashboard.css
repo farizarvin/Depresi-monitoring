@@ -1,0 +1,207 @@
+/* ===================================
+   DASHBOARD PAGE STYLES - SIMPLIFIED
+   =================================== */
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #F3E8FF;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.stat-label {
+    font-size: 0.8125rem;
+    color: #6B7280;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1E2939;
+    margin: 0;
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.stat-icon.attendance {
+    background: linear-gradient(135deg, #05DF72, #00BC7D);
+}
+
+.stat-icon.grades {
+    background: linear-gradient(135deg, #51A2FF, #2B7FFF);
+}
+
+.stat-icon.mood {
+    background: linear-gradient(135deg, #FFE860, #FFDF20);
+}
+
+.stat-icon.rank {
+    background: linear-gradient(135deg, #FB64B6, #FF2056);
+}
+
+/* Chart Card */
+.chart-card {
+    background: #fff;
+    border: 1px solid #F3E8FF;
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.chart-header {
+    background: linear-gradient(270deg, #F0FDF4, #ECFDF5);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1E2939;
+    margin: 0;
+}
+
+.chart-subtitle {
+    font-size: 0.8125rem;
+    color: #6B7280;
+    margin-top: 0.25rem;
+}
+
+.chart-content {
+    padding: 1.5rem;
+}
+
+.mood-chart {
+    width: 100%;
+    height: 300px;
+    background: #FAFAFA;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Announcements Card */
+.announcements-card {
+    background: #fff;
+    border: 1px solid #F3E8FF;
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.announcements-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.announcements-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1E2939;
+    margin: 0;
+}
+
+.announcements-content {
+    padding: 1.25rem 1.5rem;
+}
+
+.announcement-item {
+    background: #DBEAFE;
+    border: 1px solid #93C5FD;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: transform 0.3s;
+}
+
+.announcement-item:last-child {
+    margin-bottom: 0;
+}
+
+.announcement-item:hover {
+    transform: translateX(4px);
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.announcement-title-text {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1E2939;
+    margin: 0;
+}
+
+.announcement-badge {
+    background: #AD46FF;
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+}
+
+.announcement-badge.besok {
+    background: #8200DB;
+}
+
+.announcement-description {
+    font-size: 0.8125rem;
+    color: #4B5563;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

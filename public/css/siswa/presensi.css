@@ -1,0 +1,345 @@
+/* ===================================
+   PRESENSI PAGE STYLES - SIMPLIFIED
+   =================================== */
+
+.content-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.form-header {
+    margin-bottom: 1.25rem;
+}
+
+.form-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: #1E2939;
+    margin-bottom: 0.25rem;
+}
+
+.form-date {
+    font-size: 0.8125rem;
+    color: #6B7280;
+}
+
+.form-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.625rem;
+    display: block;
+}
+
+/* Status Selection */
+.status-selection {
+    display: flex;
+    gap: 0.375rem;
+    margin-bottom: 1.25rem;
+}
+
+.status-option {
+    flex: 1;
+}
+
+.status-radio {
+    display: none;
+}
+
+.status-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.375rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 0.625rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-height: 60px;
+    background: #fff;
+}
+
+.status-label:hover {
+    border-color: #D1D5DB;
+    transform: translateY(-2px);
+}
+
+.status-radio:checked+.status-label {
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.status-radio:checked+.status-label.hadir {
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    border-color: #10B981;
+}
+
+.status-radio:checked+.status-label.izin {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    border-color: #F59E0B;
+}
+
+.status-radio:checked+.status-label.sakit {
+    background: linear-gradient(135deg, #FEE2E2, #FECACA);
+    border-color: #EF4444;
+}
+
+.status-icon {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.status-icon.hadir {
+    color: #10B981;
+}
+
+.status-icon.izin {
+    color: #F59E0B;
+}
+
+.status-icon.sakit {
+    color: #EF4444;
+}
+
+.status-text {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+/* Conditional Forms */
+.conditional-form {
+    display: none;
+    padding: 1.25rem;
+    background: #F9FAFB;
+    border-radius: 0.875rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid #E5E7EB;
+}
+
+.conditional-form.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Inputs */
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #AD46FF;
+    box-shadow: 0 0 0 4px rgba(173, 70, 255, 0.1);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: #9CA3AF;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-size: 0.8125rem;
+}
+
+/* Upload Area */
+.upload-section {
+    margin-bottom: 1.25rem;
+}
+
+.upload-area {
+    border: 2px dashed #D1D5DB;
+    border-radius: 0.75rem;
+    padding: 2rem 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    background: #F9FAFB;
+}
+
+.upload-area.small {
+    padding: 1.5rem 1rem;
+}
+
+.upload-area:hover {
+    border-color: #AD46FF;
+    background: #F5F3FF;
+}
+
+.upload-area.dragover {
+    border-color: #51A2FF;
+    background: #EFF6FF;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    color: #AD46FF;
+    margin-bottom: 0.75rem;
+}
+
+.upload-text {
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.upload-subtext {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+}
+
+.file-input {
+    display: none;
+}
+
+.preview-container {
+    margin-top: 0.75rem;
+    display: none;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 0.625rem;
+    border: 2px solid #E5E7EB;
+}
+
+.remove-image {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background: #EF4444;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.remove-image:hover {
+    background: #DC2626;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #10B981, #059669);
+    border: none;
+    border-radius: 0.75rem;
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-card {
+        padding: 1.25rem 1rem;
+    }
+
+    .status-selection {
+        gap: 0.375rem;
+    }
+
+    .status-label {
+        padding: 0.375rem 0.25rem;
+        min-height: 50px;
+    }
+
+    .status-icon {
+        font-size: 1.125rem;
+        margin-bottom: 0.1875rem;
+    }
+
+    .status-text {
+        font-size: 0.625rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .status-selection {
+        gap: 0.1875rem;
+    }
+
+    .status-label {
+        padding: 0.3125rem 0.1875rem;
+        min-height: 45px;
+        border-radius: 0.5rem;
+    }
+
+    .status-icon {
+        font-size: 1rem;
+        margin-bottom: 0.125rem;
+    }
+
+    .status-text {
+        font-size: 0.5625rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .status-selection {
+        gap: 0.25rem;
+    }
+
+    .status-label {
+        padding: 0.4375rem 0.25rem;
+        min-height: 58px;
+    }
+
+    .status-icon {
+        font-size: 1.1875rem;
+    }
+
+    .status-text {
+        font-size: 0.625rem;
+    }
+}
