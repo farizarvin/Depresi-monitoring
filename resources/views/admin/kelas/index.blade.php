@@ -17,37 +17,43 @@
     <div class="col-12 col-lg-8">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-success bg-gradient bg-opacity-50 no-after p-4">
-                <h6 class="m-0 fw-medium fs-5 text-black-50 mb-3">Daftar Kelas</h6>
-                <form method="GET" class="row g-2 align-items-center">
-                    <div class="col-12 col-md-5">
-                        <input type="text" name="search" class="form-control" placeholder="Cari nama kelas..." value="{{ $search ?? '' }}">
+                <div class="row align-items-center gy-2">
+                    <div class="col-12 col-md-3">
+                        <h6 class="m-0 fw-medium fs-5 text-black-50">Daftar Kelas</h6>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <select name="jenjang" class="form-select">
-                            <option value="">Semua Jenjang</option>
-                            @foreach($jenjangs as $jenjang)
-                                <option value="{{ $jenjang }}" {{ $jenjangFilter == $jenjang ? 'selected' : '' }}>
-                                    {{ $jenjang }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="col-12 col-md-9">
+                        <form method="GET" class="row g-2">
+                            <div class="col-12 col-md-5">
+                                <input type="text" name="search" class="form-control" placeholder="Cari nama kelas..." value="{{ $search ?? '' }}">
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select name="jenjang" class="form-select">
+                                    <option value="">Semua Jenjang</option>
+                                    @foreach($jenjangs as $jenjang)
+                                        <option value="{{ $jenjang }}" {{ $jenjangFilter == $jenjang ? 'selected' : '' }}>
+                                            {{ $jenjang }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select name="jurusan" class="form-select">
+                                    <option value="">Semua Jurusan</option>
+                                    @foreach($jurusans as $jurusan)
+                                        <option value="{{ $jurusan }}" {{ $jurusanFilter == $jurusan ? 'selected' : '' }}>
+                                            {{ $jurusan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-1">
+                                <button type="submit" class="btn btn-warning w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <select name="jurusan" class="form-select">
-                            <option value="">Semua Jurusan</option>
-                            @foreach($jurusans as $jurusan)
-                                <option value="{{ $jurusan }}" {{ $jurusanFilter == $jurusan ? 'selected' : '' }}>
-                                    {{ $jurusan }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-1">
-                        <button type="submit" class="btn btn-warning w-100">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
             <div class="card-body p-4">
                 <div class="table-responsive">

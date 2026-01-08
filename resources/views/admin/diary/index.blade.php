@@ -94,36 +94,42 @@
     <div class="col-12 col-lg-11">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary bg-gradient bg-opacity-50 no-after p-4">
-                <h6 class="m-0 fw-medium fs-5 text-black-50 mb-3">Mental Siswa</h6>
-                <form method="GET" class="row g-2 align-items-center">
-                    <div class="col-12 col-md-5">
-                        <input type="text" name="search" class="form-control" placeholder="Cari nama atau NISN..." value="{{ $search ?? '' }}">
+                <div class="row align-items-center gy-2">
+                    <div class="col-12 col-md-3">
+                        <h6 class="m-0 fw-medium fs-5 text-black-50">Mental Siswa</h6>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <select name="class" class="form-select">
-                            <option value="">Semua Kelas</option>
-                            @foreach($classes as $class)
-                                <option value="{{ $class->id }}" {{ $classFilter == $class->id ? 'selected' : '' }}>
-                                    {{ $class->nama }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="col-12 col-md-9">
+                        <form method="GET" class="row g-2 justify-content-end">
+                            <div class="col-12 col-md-5">
+                                <input type="text" name="search" class="form-control" placeholder="Cari nama atau NISN..." value="{{ $search ?? '' }}">
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select name="class" class="form-select">
+                                    <option value="">Semua Kelas</option>
+                                    @foreach($classes as $class)
+                                        <option value="{{ $class->id }}" {{ $classFilter == $class->id ? 'selected' : '' }}>
+                                            {{ $class->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <select name="year" class="form-select">
+                                    @foreach($academicYears as $year)
+                                        <option value="{{ $year->id }}" {{ $academicYear == $year->id ? 'selected' : '' }}>
+                                            {{ $year->nama_tahun }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-2 col-md-1">
+                                <button type="submit" class="btn btn-warning w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="col-5 col-md-3">
-                        <select name="year" class="form-select">
-                            @foreach($academicYears as $year)
-                                <option value="{{ $year->id }}" {{ $academicYear == $year->id ? 'selected' : '' }}>
-                                    {{ $year->nama_tahun }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-1 col-md-1">
-                        <button type="submit" class="btn btn-warning w-100">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
             <div class="card-body p-4">
                 <div class="table-responsive">
