@@ -111,7 +111,7 @@
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae, qui!
+                                Atur jadwal masuk dan pulang sekolah untuk setiap jenjang.
                             </div>
                         </div>
                         <hr class="m-0">

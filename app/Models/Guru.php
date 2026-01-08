@@ -18,6 +18,8 @@ class Guru extends Model
         'alamat',
         'gender',
         'tgl_lahir',
+        'tgl_lahir',
+        'id_kelas',
     ];
 
     protected $casts = [
@@ -27,5 +29,10 @@ class Guru extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas');
     }
 }

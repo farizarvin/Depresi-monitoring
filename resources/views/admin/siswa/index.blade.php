@@ -10,7 +10,7 @@
         </div>
     </div>
 @endsection
-@
+
 @section('content')
 <div class="row g-4" x-data="{selected_id : `{{ old('id') }}`, id_user : `{{ old('id_user') }}`}" x-ref="mainContainer">
     <div class="col-12 col-lg-8">
@@ -18,10 +18,10 @@
             <div class="card-header bg-success bg-gradient bg-opacity-50 no-after p-4">
                 <h6 class="m-0 fw-medium fs-5 text-black-50 mb-3">Daftar Siswa</h6>
                 <form method="GET" class="row g-2 align-items-center">
-                    <div class="col-12 col-md-5">
+                    <div class="col-12 col-md-4">
                         <input type="text" name="search" class="form-control" placeholder="Cari nama atau NISN..." value="{{ $search ?? '' }}">
                     </div>
-                    <div class="col-6 col-md-3">
+                    <div class="col-4 col-md-2">
                         <select name="class" class="form-select">
                             <option value="">Semua Kelas</option>
                             @foreach($classes as $class)
@@ -31,14 +31,21 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-5 col-md-3">
+                    <div class="col-4 col-md-2">
                         <select name="status" class="form-select">
                             <option value="">Semua Status</option>
                             <option value="1" {{ $statusFilter === '1' ? 'selected' : '' }}>Aktif</option>
                             <option value="0" {{ $statusFilter === '0' ? 'selected' : '' }}>Non-Aktif</option>
                         </select>
                     </div>
-                    <div class="col-1 col-md-1">
+                    <div class="col-4 col-md-2">
+                        <select name="gender" class="form-select">
+                            <option value="">Semua Gender</option>
+                            <option value="1" {{ $genderFilter === '1' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="0" {{ $genderFilter === '0' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
                         <button type="submit" class="btn btn-warning w-100">
                             <i class="fas fa-search"></i>
                         </button>
@@ -111,7 +118,7 @@
                             @empty
                                 <tr>
                                     <td colspan="6" class="bg-light-subtle text-center text-black-50 py-4">
-                                        @if($search || $classFilter || $statusFilter !== null)
+                                        @if($search || $classFilter || $statusFilter !== null || $genderFilter !== null)
                                             <i class="fas fa-search fa-2x mb-2 text-muted"></i>
                                             <div>Tidak ditemukan data siswa yang sesuai</div>
                                             <small class="text-muted">Coba ubah kata kunci pencarian atau filter</small>

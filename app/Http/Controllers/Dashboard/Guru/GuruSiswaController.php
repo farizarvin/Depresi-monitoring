@@ -42,6 +42,13 @@ class GuruSiswaController extends Controller
      */
     public function moodIndex()
     {
+        $user = auth()->user();
+        if (!$user->profile || !$user->profile->id_kelas) {
+             return redirect()->route('guru.dashboard')->with('error', 'Silakan hubungkan kelas terlebih dahulu.');
+        }
+
+        $classId = $user->profile->id_kelas;
+
         $siswas = Siswa::with([
             // 'presensi' => function($query) {
             //     return $query->latest('waktu')->limit(1)->with('diary');
@@ -50,8 +57,13 @@ class GuruSiswaController extends Controller
                 return $query->latest('created_at')->first();
             }
         ])
-        ->where('need_selfcare', true)
-        ->orWhere('is_depressed', true)
+        ->whereHas('kelas_aktif', function($q) use ($classId) {
+            $q->where('kelas.id', $classId);
+        })
+        ->where(function($q) {
+            $q->where('need_selfcare', true)
+              ->orWhere('is_depressed', true);
+        })
         ->get();
         
 
@@ -92,7 +104,16 @@ class GuruSiswaController extends Controller
      */
     public function moodDetail($siswaId)
     {
-        $siswa = Siswa::findOrFail($siswaId);
+        $user = auth()->user();
+        $guru = $user->profile;
+
+        if (!$guru || !$guru->id_kelas) {
+             return redirect()->route('guru.dashboard');
+        }
+
+        $siswa = Siswa::whereHas('kelas_aktif', function($q) use ($guru) {
+            $q->where('kelas.id', $guru->id_kelas);
+        })->findOrFail($siswaId);
         
         // Get 14-day mood data
         $startDate = Carbon::now()->subDays(13);
