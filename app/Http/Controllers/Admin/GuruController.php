@@ -27,11 +27,11 @@ class GuruController extends Controller
     {
         $search = $request->input('search');
         $genderFilter = $request->input('gender');
-        
+
         $query = Guru::query()
             ->select('guru.*', 'users.email', 'users.avatar_url')
             ->leftJoin('users', 'users.id', '=', 'guru.id_user');
-        
+
         // Apply search filter
         if ($search) {
             $query->where(function($q) use($search) {
@@ -39,12 +39,12 @@ class GuruController extends Controller
                   ->orWhere('guru.nip', 'LIKE', "%{$search}%");
             });
         }
-        
+
         // Apply gender filter
         if ($genderFilter !== null && $genderFilter !== '') {
             $query->where('guru.gender', $genderFilter);
         }
-        
+
         $teachers = $query->paginate(10)->appends($request->except('page'));
 
         return view('admin.guru.index', compact('teachers', 'search', 'genderFilter'));
@@ -69,7 +69,7 @@ class GuruController extends Controller
             $userData = [
                 'email' => $validated['email'],
                 'username' => $validated['nip'],
-                'password' => bcrypt($password),
+                'password' => $password,
                 'avatar_url' => $fileName,
                 'role' => 'guru'
             ];

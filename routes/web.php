@@ -63,7 +63,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     // Route::get('/dashboard', [DashboardController::class, 'adminDashboard'] );
     // Route::view('/kelas', 'admin.kelas.index')->name('admin.kelas.index');
     // Route::view('/tahun-akademik', 'admin.tahun_akademik.index')->name('admin.thak.index');
-    
+
     // Route::get('/hari-libur', [HariLiburController::class, 'index'])->name('admin.libur.index');
 });
 
@@ -124,13 +124,13 @@ Route::group(['middleware'=>['auth', 'role:admin']], function() {
 Route::group(['middleware'=>['auth', 'role:guru']], function() {
     // Dashboard Guru (Ditambahkan nama route)
     Route::get('/guru/dashboard', [DashboardController::class, 'guruDashboard'])->name('guru.dashboard');
-    
+
     // Fitur Guru Lainnya
     Route::get('/guru/laporan-mood', [\App\Http\Controllers\Dashboard\Guru\GuruSiswaController::class, 'moodIndex'])->name('guru.mood.index');
     Route::get('/guru/laporan-mood/{siswa}', [\App\Http\Controllers\Dashboard\Guru\GuruSiswaController::class, 'moodDetail'])->name('guru.mood.detail');
-    Route::get('/guru/laporan-mood/{siswa}/export', [\App\Http\Controllers\Dashboard\Guru\GuruSiswaController::class, 'exportMoodCsv'])->name('guru.mood.export');
+    Route::get('/guru/laporan-mood/{siswa}/export', [\App\Http\Controllers\Dashboard\Guru\GuruSiswaController::class, 'exportMoodPdf'])->name('guru.mood.export');
     Route::get('/guru/laporan-nilai', [\App\Http\Controllers\Dashboard\Guru\GuruSiswaController::class, 'nilaiIndex'])->name('guru.nilai.index');
-    
+
     // Class Management
     Route::post('/guru/class/join', [\App\Http\Controllers\Dashboard\Guru\ClassController::class, 'joinClass'])->name('guru.class.join');
 });
@@ -138,7 +138,7 @@ Route::group(['middleware'=>['auth', 'role:guru']], function() {
 // 6. Siswa Routes (Akses: Auth + Role Siswa)
 Route::group(['middleware'=>['auth', 'role:siswa']], function() {
     // Dashboard Siswa
-    
+
     // Route Siswa Lainnya
     Route::group(['middleware'=>['survey_check:0']], function() {
         Route::get('/siswa/dashboard', [DashboardController::class, 'siswaDashboard'])->name('siswa.dashboard');
@@ -147,7 +147,7 @@ Route::group(['middleware'=>['auth', 'role:siswa']], function() {
         Route::post('/siswa/presensi', [PresensiController::class, 'store'])->name('siswa.presensi.store');
         Route::get('/siswa/statistik', [App\Http\Controllers\App\Siswa\StatistikController::class, 'index'])->name('siswa.statistik');
     });
-    
+
     Route::group(['middleware'=>['survey_check:1']], function() {
         Route::view('/form-input-dass21', 'dass21.form-input')->name('dass21.form');
         Route::post('/siswa/dass21', [App\Http\Controllers\App\Siswa\Dass21Controller::class, 'store'])->name('dass21.store');
@@ -157,6 +157,3 @@ Route::group(['middleware'=>['auth', 'role:siswa']], function() {
     // Route::view('/siswa/jadwal', 'siswa.jadwal')->name('siswa.jadwal');
     // Route::view('/siswa/laporan-nilai', 'siswa.laporan-nilai')->name('siswa.laporan-nilai');
 });
-
-
-

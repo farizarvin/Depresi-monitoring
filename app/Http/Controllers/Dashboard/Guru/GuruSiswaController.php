@@ -65,7 +65,7 @@ class GuruSiswaController extends Controller
               ->orWhere('is_depressed', true);
         })
         ->get();
-        
+
 
         $siswaData = $siswas->map(function($siswa) {
             $lastPresensi = $siswa->presensi()->with('diary');
@@ -73,7 +73,7 @@ class GuruSiswaController extends Controller
             $lastPresensi = $lastPresensi->latest('waktu')->first();
             $latestMood = '-';
             $latestMoodLabel = '-';
-            
+
             if ($lastPresensi && $lastPresensi->diary && $lastPresensi->diary->swafoto_pred) {
                 // try {
                 //     $predJson = json_decode($lastPresensi->diary->swafoto_pred);
@@ -84,7 +84,7 @@ class GuruSiswaController extends Controller
                 // } catch (\Exception $e) { }
 
                 $latestMoodLabel=$lastPresensi->diary->swafoto_pred;
-                
+
             }
 
             return [
@@ -114,11 +114,11 @@ class GuruSiswaController extends Controller
         $siswa = Siswa::whereHas('kelas_aktif', function($q) use ($guru) {
             $q->where('kelas.id', $guru->id_kelas);
         })->findOrFail($siswaId);
-        
+
         // Get 14-day mood data
         $startDate = Carbon::now()->subDays(13);
         $endDate = Carbon::now();
-        
+
         $presensiData = Presensi::where('id_siswa', $siswaId)
             ->whereDate('waktu', '>=', $startDate)
             ->whereDate('waktu', '<=', $endDate)
@@ -130,7 +130,7 @@ class GuruSiswaController extends Controller
             $emotionLabel = '-';
             $emotionEmoji = '-';
             $predictionJson = '-';
-            
+
             if ($presensi->diary && $presensi->diary->swafoto_pred) {
                 // $predictionJson = $presensi->diary->swafoto_pred;
                 // try {
@@ -163,7 +163,7 @@ class GuruSiswaController extends Controller
 
         $dassScores = null;
         $dassAnswers = [];
-        
+
         if ($dassResult) {
             $dassScores = $dassResult->calculateScores();
             $dassScores['depression_label'] = $this->getDepressionLabel($dassScores['depression']);
@@ -176,7 +176,7 @@ class GuruSiswaController extends Controller
                 foreach ($dassResult->answers as $ans) {
                     $qIndex = is_array($ans) ? $ans['question_index'] : $ans->question_index;
                     $value = is_array($ans) ? $ans['value'] : $ans->value;
-                    
+
                     $dassAnswers[] = [
                         'no' => $qIndex + 1,
                         'question' => self::DASS21_QUESTIONS[$qIndex]['text'] ?? "Pertanyaan $qIndex",
@@ -200,10 +200,10 @@ class GuruSiswaController extends Controller
     public function exportMoodCsv($siswaId)
     {
         $siswa = Siswa::findOrFail($siswaId);
-        
+
         $startDate = Carbon::now()->subDays(13);
         $endDate = Carbon::now();
-        
+
         $presensiData = Presensi::where('id_siswa', $siswaId)
             ->whereDate('waktu', '>=', $startDate)
             ->whereDate('waktu', '<=', $endDate)
@@ -223,10 +223,10 @@ class GuruSiswaController extends Controller
 
         $callback = function() use ($presensiData, $dassScores, $siswa, $dassResult) {
             $file = fopen('php://output', 'w');
-            
+
             // BOM for Excel UTF-8
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
+
             // Student Info
             fputcsv($file, ['Laporan Mood Siswa']);
             fputcsv($file, ['Nama', $siswa->nama_lengkap]);
@@ -245,13 +245,13 @@ class GuruSiswaController extends Controller
                 // DASS-21 Answers Section
                 fputcsv($file, ['Jawaban DASS-21']);
                 fputcsv($file, ['No', 'Pertanyaan', 'Kategori', 'Skor', 'Jawaban']);
-                
+
                 if (is_array($dassResult->answers)) {
                     $answersData = [];
                     foreach ($dassResult->answers as $ans) {
                         $qIndex = is_array($ans) ? $ans['question_index'] : $ans->question_index;
                         $value = is_array($ans) ? $ans['value'] : $ans->value;
-                        
+
                         $answersData[] = [
                             'no' => $qIndex + 1,
                             'question' => self::DASS21_QUESTIONS[$qIndex]['text'] ?? "Pertanyaan " . ($qIndex + 1),
@@ -262,7 +262,7 @@ class GuruSiswaController extends Controller
                     }
                     // Sort by question number
                     usort($answersData, fn($a, $b) => $a['no'] <=> $b['no']);
-                    
+
                     foreach ($answersData as $ans) {
                         fputcsv($file, [
                             $ans['no'],
@@ -279,7 +279,7 @@ class GuruSiswaController extends Controller
             // Mood Data Header
             fputcsv($file, ['Riwayat Mood 14 Hari']);
             fputcsv($file, ['Tanggal', 'Waktu', 'Status Kehadiran', 'Prediksi Kamera', 'Catatan']);
-            
+
             foreach ($presensiData as $p) {
                 $emotionLabel = '-';
                 if ($p->diary && $p->diary->swafoto_pred) {
@@ -302,6 +302,93 @@ class GuruSiswaController extends Controller
         };
 
         return new StreamedResponse($callback, 200, $headers);
+    }
+    public function exportMoodPdf($siswaId)
+    {
+        $siswa = Siswa::findOrFail($siswaId);
+
+        // Get 14-day mood data similar to details view logic
+        $startDate = Carbon::now()->subDays(13);
+        $endDate = Carbon::now();
+
+        $presensiData = Presensi::where('id_siswa', $siswaId)
+            ->whereDate('waktu', '>=', $startDate)
+            ->whereDate('waktu', '<=', $endDate)
+            ->with('diary')
+            ->orderBy('waktu', 'desc')
+            ->get();
+
+        // Transform data for view
+        $moodHistory = $presensiData->map(function($presensi) {
+            $emotionLabel = '-';
+            $emotionEmoji = '-';
+            $textPred = '-';
+            $manualMood = '-';
+
+            if ($presensi->diary) {
+                // Camera Prediction
+                if ($presensi->diary->swafoto_pred) {
+                    try {
+                        $pred = json_decode($presensi->diary->swafoto_pred);
+                        if (isset($pred->predicted)) {
+                            $emotionLabel = ucfirst($pred->predicted);
+                            $emotionEmoji = $this->getEmoji($emotionLabel);
+                        }
+                    } catch (\Exception $e) {}
+                }
+
+                // Text Prediction
+                $textPred = $presensi->diary->catatan_pred ?? '-';
+
+                // Manual Mood (Text Input)
+                $manualMood = $presensi->diary->judul_perasaan ?? '-';
+            }
+
+            return [
+                'tanggal' => $presensi->waktu->translatedFormat('d M Y'),
+                'waktu' => $presensi->waktu->format('H:i'),
+                'status' => $presensi->status,
+                'camera_pred' => $emotionLabel,
+                'camera_emoji' => '', // Removed emoji
+                'text_pred' => ucfirst($textPred),
+                'manual_mood' => $manualMood,
+                'catatan' => $presensi->diary->catatan ?? '-',
+            ];
+        });
+
+        // Get DASS-21 Data
+        $dassResult = Dass21Hasil::where('id_siswa', $siswaId)->latest()->first();
+        $dassScores = null;
+        $dassAnswers = [];
+
+        if ($dassResult) {
+            $dassScores = $dassResult->calculateScores();
+            $dassScores['depression_label'] = $this->getDepressionLabel($dassScores['depression']);
+            $dassScores['anxiety_label'] = $this->getAnxietyLabel($dassScores['anxiety']);
+            $dassScores['stress_label'] = $this->getStressLabel($dassScores['stress']);
+            $dassScores['date'] = $dassResult->created_at->translatedFormat('d M Y H:i');
+
+            // Format answers with question text
+            if (is_array($dassResult->answers)) {
+                foreach ($dassResult->answers as $ans) {
+                    $qIndex = is_array($ans) ? $ans['question_index'] : $ans->question_index;
+                    $value = is_array($ans) ? $ans['value'] : $ans->value;
+
+                    $dassAnswers[] = [
+                        'no' => $qIndex + 1,
+                        'question' => self::DASS21_QUESTIONS[$qIndex]['text'] ?? "Pertanyaan $qIndex",
+                        'category' => self::DASS21_QUESTIONS[$qIndex]['category'] ?? '-',
+                        'answer' => $value,
+                        'answer_text' => $this->getAnswerText($value),
+                    ];
+                }
+                // Sort by question number
+                usort($dassAnswers, fn($a, $b) => $a['no'] <=> $b['no']);
+            }
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('guru.mood.pdf', compact('siswa', 'moodHistory', 'dassScores', 'dassAnswers'));
+        return $pdf->download('Laporan_Mood_' . str_replace(' ', '_', $siswa->nama_lengkap) . '.pdf');
     }
 
     /**
