@@ -11,7 +11,7 @@
                     <h4 class="mb-0 fw-bold fs-5 fs-md-4"><i class="bi bi-clipboard-data me-2"></i> Kuesioner DASS-21</h4>
                 </div>
                 <div class="card-body p-3 p-md-5">
-                    
+
                     {{-- Instructions --}}
                     <div class="alert alert-info border-0 bg-info bg-opacity-10 text-info mb-4" role="alert" style="border-radius: 15px;">
                         <h5 class="alert-heading fw-bold fs-6"><i class="bi bi-info-circle-fill me-2"></i> Petunjuk Pengisian</h5>
@@ -121,14 +121,14 @@
             // Update Text
             questionTextEl.textContent = questions[currentQuestionIndex];
             currentNumberEl.textContent = currentQuestionIndex + 1;
-            
+
             // Update Progress
             const progress = ((currentQuestionIndex) / questions.length) * 100;
             progressBarEl.style.width = `${progress}%`;
 
             // Render Options
             renderOptions();
-            
+
             // Update Navigation Buttons
             updateNavigation();
         } else {
@@ -138,25 +138,25 @@
 
     function renderOptions() {
         optionsContainerEl.innerHTML = ''; // Clear previous options
-        
+
         const currentAnswer = answers[currentQuestionIndex];
-        
+
         options.forEach((text, index) => {
             const btn = document.createElement('button');
             const isSelected = currentAnswer !== null && currentAnswer.value === index;
 
-            
-            
+
+
             // Base class
             let btnClass = 'btn p-3 text-start option-btn ';
             // Dynamic class based on selection
             btnClass += isSelected ? 'btn-primary text-white' : 'btn-outline-secondary';
-            
+
             btn.className = btnClass;
             btn.onclick = () => selectOption(index);
-            
+
             const checkHidden = isSelected ? '' : 'd-none';
-            
+
             btn.innerHTML = `
                 <div class="d-flex align-items-center">
                     <div class="rounded-circle border border-2 me-3 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; border-color: ${isSelected ? 'white' : 'inherit'} !important;">
@@ -165,12 +165,12 @@
                     <span class="fw-medium">${text}</span>
                 </div>
             `;
-            
+
             optionsContainerEl.appendChild(btn);
         });
 
-        
-        
+
+
     }
 
     function selectOption(value) {
@@ -182,15 +182,15 @@
 
         // Re-render to show selection
         renderOptions();
-        
+
         // Enable Next button
         nextBtn.disabled = false;
     }
-    
+
     function updateNavigation() {
         // Prev Button
         prevBtn.style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
-        
+
         // Next Button Text & State
         const isLastQuestion = currentQuestionIndex === questions.length - 1;
         if (isLastQuestion) {
@@ -202,13 +202,13 @@
             nextBtn.classList.add('btn-primary');
             nextBtn.classList.remove('btn-success');
         }
-        
+
         // Disable next if no answer selected yet
         optionsContainerEl.querySelectorAll('button')[3].click();
         nextBtn.disabled = answers[currentQuestionIndex] === null;
 
         // Auto Click
-        handleNext();
+        // handleNext();
     }
 
     function handlePrev() {
@@ -217,10 +217,10 @@
             loadQuestion();
         }
     }
-    
+
     function handleNext() {
         const isLastQuestion = currentQuestionIndex === questions.length - 1;
-        
+
         if (isLastQuestion) {
             showCompletion();
         } else {
@@ -232,11 +232,11 @@
     async function showCompletion() {
         // Prepare data - filter out any potential nulls (though logic should prevent valid nulls on submit)
         const validAnswers = answers.filter(a => a !== null);
-        
+
         // UI Loading State
         nextBtn.disabled = true;
         nextBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Mengirim...';
-        
+
         // Prepare data
         document.getElementById('answersInput').value = JSON.stringify(validAnswers);
 
@@ -251,7 +251,7 @@
                 },
                 body: JSON.stringify({ answers: JSON.stringify(validAnswers) })
             });
-            
+
             const data = await response.json();
             console.log(data);
 

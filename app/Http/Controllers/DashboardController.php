@@ -180,6 +180,11 @@ class DashboardController extends Controller implements HasMiddleware
     }
     public function guruDashboard()
     {
-        return view('dashboard.guru');
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $guru = $user->profile;
+        $hasClass = $guru && $guru->id_kelas;
+        $kelas = $hasClass ? $guru->kelas : null;
+
+        return view('dashboard.guru', compact('hasClass', 'kelas'));
     }
 }

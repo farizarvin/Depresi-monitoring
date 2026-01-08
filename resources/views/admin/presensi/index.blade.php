@@ -16,34 +16,42 @@
 <div class="row g-4 justify-content-center">
     <div class="col-12 col-lg-8">
         <div class="card shadow-sm mb-4">
-            <div class="card-header no-after p-4 d-flex align-items-center justify-content-between bg-success bg-gradient bg-opacity-50">
-                <div class="d-flex w-100 align-items-center justify-content-between">
-                    <h2 class="fs-5 fw-medium text-black-50 m-0 col-5 col-md-4">Riwayat Kehadiran Siswa</h2>
-                    <form method="GET" class="d-flex col-7 col-md-8 justify-content-end">
-                        <div class="col-8 col-md-5">
-                            <input type="text" name="search" class="form-control rounded-end-0 border-end-0 opacity-75" placeholder="search items" value="{{ $search ?? '' }}">
-                        </div>
-                        <div class="col-4 col-md-5 d-flex">
-                            <select name="class" class="form-select bg-light rounded-0 border-end-0 opacity-75">
-                                <option value="">All Kelas</option>
-                                @foreach($classes as $class)
-                                    <option value="{{ $class->id }}" {{ ($classFilter == $class->id) ? 'selected' : '' }}>
-                                        {{ $class->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <select name="year" class="form-select bg-light rounded-0 border-end-0 opacity-75">
-                                @foreach($academicYears as $year)
-                                    <option value="{{ $year->id }}" {{ ($academicYear == $year->id) ? 'selected' : '' }}>
-                                        {{ $year->nama_tahun }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-warning rounded-start-0">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
+            <div class="card-header no-after p-4 bg-success bg-gradient bg-opacity-50">
+                <div class="row align-items-center gy-3">
+                    <div class="col-12 col-md-4">
+                        <h2 class="fs-5 fw-medium text-black-50 m-0">Riwayat Kehadiran Siswa</h2>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <form method="GET" class="row g-2">
+                            <div class="col-12 col-md-5">
+                                <div class="input-group shadow-sm">
+                                    <input type="text" name="search" class="form-control border-0 opacity-90" placeholder="Cari siswa..." value="{{ $search ?? '' }}">
+                                    <button type="submit" class="btn btn-warning border-0 opacity-90">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <select name="class" class="form-select bg-light border-0 shadow-sm opacity-90" onchange="this.form.submit()">
+                                    <option value="">Semua Kelas</option>
+                                    @foreach($classes as $class)
+                                        <option value="{{ $class->id }}" {{ ($classFilter == $class->id) ? 'selected' : '' }}>
+                                            {{ $class->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select name="year" class="form-select bg-light border-0 shadow-sm opacity-90" onchange="this.form.submit()">
+                                    @foreach($academicYears as $year)
+                                        <option value="{{ $year->id }}" {{ ($academicYear == $year->id) ? 'selected' : '' }}>
+                                            {{ $year->nama_tahun }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class="card-body p-4">

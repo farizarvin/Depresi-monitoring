@@ -30,6 +30,7 @@ class SiswaController extends Controller
         $search = $request->input('search');
         $classFilter = $request->input('class');
         $statusFilter = $request->input('status');
+        $genderFilter = $request->input('gender');
         
         $classes = Kelas::all();
         
@@ -79,12 +80,17 @@ class SiswaController extends Controller
         if ($statusFilter !== null && $statusFilter !== '') {
             $query->where('siswa.status', $statusFilter);
         }
+
+        // Apply gender filter
+        if ($genderFilter !== null && $genderFilter !== '') {
+            $query->where('siswa.gender', $genderFilter);
+        }
         
         $students = $query->paginate(10)->appends($request->except('page'));
         
         $academicYears = TahunAkademik::where('status', true)->get()->sortBy(fn($item) => [1-$item->current, $item->nama_tahun]);
         
-        return view('admin.siswa.index', compact('students', 'classes', 'academicYears', 'search', 'classFilter', 'statusFilter'));
+        return view('admin.siswa.index', compact('students', 'classes', 'academicYears', 'search', 'classFilter', 'statusFilter', 'genderFilter'));
     }
 
     /**

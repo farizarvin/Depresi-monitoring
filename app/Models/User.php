@@ -53,6 +53,7 @@ class User extends Authenticatable
         return match ($this->role) {
             'admin'=>$this->admin(),
             'siswa'=>$this->siswa(),
+            'guru'=>$this->guru(),
             default => null
         };
     }
@@ -63,5 +64,9 @@ class User extends Authenticatable
     public function siswa() : HasOne
     {
         return $this->hasOne(Siswa::class, 'id_user');
+    }
+    public function guru() : HasOne
+    {
+        return $this->hasOne(Guru::class, 'id_user');
     }
 }
