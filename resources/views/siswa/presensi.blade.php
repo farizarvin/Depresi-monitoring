@@ -502,9 +502,16 @@
             input.value = '';
             lastValue = '';
             hideError();
-            area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+            
+            // Hide preview container properly
             container.style.display = 'none';
+            
+            // Show upload area with full styling
+            area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+            
+            // Clear image source
             img.src = '';
+            
             isDialogOpen = false;
         });
     }
