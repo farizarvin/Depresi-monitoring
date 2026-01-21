@@ -244,6 +244,7 @@ class SiswaController extends Controller
 
             // Set File Name
             $file=$request->file('avatar');
+            $oldAvatarUrl = $relatedUser->avatar_url;  // ✅ CRITICAL: Save old filename BEFORE update
             $fileName=$file ? $this->generateProfileName($file) : $relatedUser->avatar_url;
 
             // Create Data User
@@ -291,11 +292,14 @@ class SiswaController extends Controller
                     'exists' => \Storage::disk('private')->exists($storedPath)
                 ]);
 
-                $oldProfilePath=$path.'/'.$relatedUser->avatar_url;
-                $oldProfileExists=Storage::disk('private')->exists($oldProfilePath);
-                if($oldProfileExists) {
-                    Storage::disk('private')->delete($oldProfilePath);
-                    \Log::info('Old profile deleted', ['path' => $oldProfilePath]);
+                // Delete old file using saved old filename
+                if($oldAvatarUrl) {
+                    $oldProfilePath = $path . '/' . $oldAvatarUrl;
+                    $oldProfileExists = Storage::disk('private')->exists($oldProfilePath);
+                    if($oldProfileExists) {
+                        Storage::disk('private')->delete($oldProfilePath);
+                        \Log::info('Old profile deleted', ['old_path' => $oldProfilePath, 'new_path' => $storedPath]);
+                    }
                 }
             }
             DB::commit();

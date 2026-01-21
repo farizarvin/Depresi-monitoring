@@ -298,70 +298,104 @@
                 </div>
                 <div class="card-body">
                     <div 
-                        class="mb-3" 
-                        x-data="{
-
-                            img_url : `{{ old('avatar_url') }}`, 
-                            img_preview : null,
-                            img_initial : null,
-                            is_img_load : false,
-                            reset_preview() 
-                            {
-                                this.img_preview=null;
-                                $refs.img_upload.value=null;
-                            },
-                            async get_img() 
-                            {
-                                this.reset_preview();
-                                
-                                
-                                const res1=await fetch(`/files/images/users/default`)
-                                const blob1=await res1.blob();
-                                this.img_initial=URL.createObjectURL(blob1);
-                                
-                                if(this.img_url)
-                                {
-                                    const url=`id/${id_user}/${this.img_url==''?'p':this.img_url}` 
-                                    const res2=await fetch(`/files/images/users/${url}`)
-                                    const blob2=await res2.blob();
-                                    this.img_preview=URL.createObjectURL(blob2);
-
-                                }
-
-
+                    class="mb-3" 
+                    x-data="{
+                        img_url: '',
+                        current_user_id: null,
+                        img_preview: null,
+                        has_new_upload: false,
+                        
+                        cleanup() {
+                            // Revoke old blob URL to prevent memory leaks and caching
+                            if(this.img_preview && this.img_preview.startsWith('blob:')) {
+                                URL.revokeObjectURL(this.img_preview);
                             }
-                        }"
-                        x-init="get_img();$watch('img_url', _=>get_img()) "
-                        x-ref="imgContainer"
-                    >
-                        <label for="" class="fw-bold form-label">Foto Profil</label>
-                        <div class="w-50 mb-3 position-relative">
-                            <img x-bind:src="img_preview || img_initial" alt="" class="w-100 d-block" style="aspect-ratio: 1/1;object-fit: cover;">
-                            <button 
-                            type="button" 
-                            class="btn btn-danger position-absolute p-0 w-25 rounded-pill" 
-                            style="top: 0px; right: 0px;aspect-ratio: 1/1;transform: translate(50%, -50%)"
-                            x-show="img_preview!=null"
-                            x-on:click="reset_preview">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <input 
-                        type="file" 
-                        x-ref="img_upload"  
-                        id="avatar_field" 
-                        class="form-control-file form-control-file-sm d-block" 
-                        x-on:change="img_preview=URL.createObjectURL(event.target.files[0])"
-                        name="avatar">
-                        <x-form-error-text :field="'avatar'" />
-
+                            this.img_preview = null;
+                        },
+                        
+                        reset_preview() {
+                            this.cleanup();
+                            this.has_new_upload = false;
+                            if(this.$refs.img_upload) {
+                                this.$refs.img_upload.value = null;
+                            }
+                            // Re-fetch existing avatar if available
+                            this.get_img();
+                        },
+                        
+                        async get_img() {
+                            // Don't fetch if user just uploaded new file
+                            if(this.has_new_upload) {
+                                return;
+                            }
+                            
+                            // Cleanup previous preview
+                            this.cleanup();
+                            
+                            // Only fetch if there's an existing avatar and user ID
+                            if(this.img_url && this.current_user_id) {
+                                try {
+                                    // Removed 'id/' prefix to match storage structure
+                                    const url = `/files/images/users/${this.current_user_id}/${this.img_url}`;
+                                    
+                                    const res = await fetch(url, {cache: 'no-store'});
+                                    
+                                    if(res.ok) {
+                                        const blob = await res.blob();
+                                        const blobUrl = URL.createObjectURL(blob);
+                                        this.img_preview = blobUrl;
+                                    }
+                                } catch(e) {
+                                    // Silent fail or minimal logging if needed
+                                }
+                            }
+                        },
+                        
+                        handleFileSelect(event) {
+                            this.cleanup();
+                            this.has_new_upload = true;
+                            const file = event.target.files[0];
+                            if(file) {
+                                this.img_preview = URL.createObjectURL(file);
+                            }
+                        }
+                    }"
+                    x-init="$watch('img_url', () => get_img()); $watch('current_user_id', () => get_img())"
+                    x-ref="imgContainer"
+                >
+                    <label for="" class="fw-bold form-label">Foto Profil</label>
+                    
+                    <!-- Show preview if image exists (either existing or newly uploaded) -->
+                    <div class="w-50 mb-3 position-relative" x-show="img_preview" style="display: none;">
+                        <img x-bind:src="img_preview" alt="" class="w-100 d-block" style="aspect-ratio: 1/1; object-fit: cover; border: 2px solid #E5E7EB; border-radius: 8px;">
+                        <!-- Only show delete button for new uploads -->
+                        <button 
+                        type="button" 
+                        class="btn btn-danger position-absolute p-0 w-25 rounded-pill" 
+                        style="top: 0px; right: 0px; aspect-ratio: 1/1; transform: translate(50%, -50%)"
+                        x-show="has_new_upload"
+                        x-on:click="reset_preview">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
+                    
+                    <input 
+                    type="file" 
+                    x-ref="img_upload"  
+                    id="avatar_field" 
+                    class="form-control-file form-control-file-sm d-block" 
+                    accept="image/jpeg,image/jpg,image/png"
+                    x-on:change="handleFileSelect($event)"
+                    name="avatar">
+                    <small class="text-muted d-block mt-1">Format: JPG, PNG. Maksimal: 512KB</small>
+                    <x-form-error-text :field="'avatar'" />
+
+                </div>
                     <div class="mb-3">
                         <label for="" class="form-label fw-medium">
                             <small>Email</small>
                         </label>
                         <input type="text" id="email_field" class="form-control" name="email" value="{{ old('email') }}">
-                        <x-form-error-text :field="'email'" />
                     </div>
                 </div>
             </div>
@@ -397,7 +431,9 @@
         genderFields.forEach(gf=>{
             gf.checked=gf.value==form['gender']
         })
-        updateImgURL(form['avatar_url'])
+        
+        // Set the avatar URL with userId (will trigger get_img via $watch)
+        updateImgURL(form['avatar_url'], userId)
         
     }
     const submitDeleteForm=()=>deleteForm.submit()
@@ -416,11 +452,22 @@
         methodField.value='POST';
         data.selected_id=null;
     }
-    function updateImgURL(url)
+    function updateImgURL(url, userId)
     {
         const data=Alpine.$data(document.querySelector('[x-ref="imgContainer"]'))
-        data.img_url=url;
         
+        // Sequence to avoid race conditions and ensure proper cleanup:
+        // 1. Clear img_url triggers get_img -> cleanup() -> clears preview
+        data.img_url = null; 
+        
+        // 2. Set new user ID (no fetch yet because img_url is null)
+        data.current_user_id = userId;
+        
+        // 3. Set new img_url triggers get_img -> fetches new image
+        // Use timeout to ensure reactivity processes the changes
+        setTimeout(() => {
+            data.img_url = url || '';
+        }, 50);
     }
     
 </script>

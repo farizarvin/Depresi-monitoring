@@ -224,58 +224,66 @@
                     <div 
                         class="mb-3" 
                         x-data="{
-                            id_user : `{{ old('id_user') }}`,
-                            img_url : `{{ old('avatar_url') }}`, 
-                            img_preview : null,
-                            img_initial : null,
-                            is_img_load : false,
-                            reset_preview() 
-                            {
-                                this.img_preview=null;
-                                $refs.img_upload.value=null;
+                            id_user: `{{ old('id_user') }}`,
+                            img_url: `{{ old('avatar_url') }}`,
+                            current_user_id: `{{ old('id_user') }}`,
+                            img_preview: null,
+                            has_new_upload: false,
+                            
+                            cleanup() {
+                                if(this.img_preview && this.img_preview.startsWith('blob:')) {
+                                    URL.revokeObjectURL(this.img_preview);
+                                }
+                                this.img_preview = null;
                             },
-                            async get_img() 
-                            {
-                                this.reset_preview();
-                                
-                                try {
-                                    const res1=await fetch(`/files/images/users/default`)
-                                    if(res1.ok){
-                                        const blob1=await res1.blob();
-                                        this.img_initial=URL.createObjectURL(blob1);
-                                    }
-                                } catch(e) {
-                                    console.error('Failed to load default image', e);
+                            
+                            reset_preview() {
+                                this.cleanup();
+                                this.has_new_upload = false;
+                                if(this.$refs.img_upload) {
+                                    this.$refs.img_upload.value = null;
                                 }
+                                this.get_img();
+                            },
+                            
+                            async get_img() {
+                                if(this.has_new_upload) return;
                                 
-                                if(this.img_url && this.id_user)
-                                {
+                                this.cleanup();
+                                
+                                if(this.img_url && this.current_user_id) {
                                     try {
-                                        const url=`id/${this.id_user}/${this.img_url==''?'p':this.img_url}` 
-                                        const res2=await fetch(`/files/images/users/${url}`)
-                                        if(res2.ok){
-                                            const blob2=await res2.blob();
-                                            this.img_preview=URL.createObjectURL(blob2);
+                                        const url = `/files/images/users/${this.current_user_id}/${this.img_url}`;
+                                        const res = await fetch(url, {cache: 'no-store'});
+                                        
+                                        if(res.ok) {
+                                            const blob = await res.blob();
+                                            this.img_preview = URL.createObjectURL(blob);
                                         }
-                                    } catch(e) {
-                                        console.error('Failed to load user image', e);
-                                    }
+                                    } catch(e) {}
                                 }
-
-
+                            },
+                            
+                            handleFileSelect(event) {
+                                this.cleanup();
+                                this.has_new_upload = true;
+                                const file = event.target.files[0];
+                                if(file) {
+                                    this.img_preview = URL.createObjectURL(file);
+                                }
                             }
                         }"
-                        x-init="get_img();$watch('img_url', _=>get_img()) "
+                        x-init="get_img(); $watch('img_url', () => get_img()); $watch('current_user_id', () => get_img())"
                         x-ref="imgContainer"
                     >
                         <label for="" class="fw-bold form-label">Foto Profil</label>
                         <div class="w-50 mb-3 position-relative">
-                            <img x-bind:src="img_preview || img_initial" alt="Preview Image" class="w-100 d-block rounded border bg-light" style="aspect-ratio: 1/1;object-fit: cover;">
+                            <img x-bind:src="img_preview" x-show="img_preview" alt="Preview Image" class="w-100 d-block rounded border bg-light" style="aspect-ratio: 1/1;object-fit: cover;">
                             <button 
                             type="button" 
                             class="btn btn-danger position-absolute p-0 w-25 rounded-pill shadow-sm" 
                             style="top: 0px; right: 0px;aspect-ratio: 1/1;transform: translate(50%, -50%)"
-                            x-show="img_preview!=null"
+                            x-show="has_new_upload"
                             x-on:click="reset_preview">
                                 <i class="fas fa-times"></i>
                             </button>
@@ -285,7 +293,7 @@
                         x-ref="img_upload"  
                         id="avatar_field" 
                         class="form-control form-control-sm d-block" 
-                        x-on:change="img_preview=URL.createObjectURL(event.target.files[0])"
+                        x-on:change="handleFileSelect($event)"
                         name="avatar">
                         <x-form-error-text :field="'avatar'" />
 
@@ -356,9 +364,13 @@
     function updateImgURL(url, userId)
     {
         const data=Alpine.$data(document.querySelector('[x-ref="imgContainer"]'))
-        data.id_user=userId;
-        data.img_url=url;
         
+        data.img_url = null;
+        data.current_user_id = userId;
+        
+        setTimeout(() => {
+            data.img_url = url || '';
+        }, 50);
     }
     
 

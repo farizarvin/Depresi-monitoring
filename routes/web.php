@@ -44,6 +44,12 @@ Route::group(['middleware'=>['auth']], function() {
     ->name('image.web.default');
     Route::get('/files/{mime}/{type}/{id_col}/{id}/{filepath}', [ImageController::class, 'webGet'])
     ->name('image.web.show');
+    
+    // User profile images route (untuk admin panel)
+    Route::get('/files/images/users/{path}', [\App\Http\Controllers\FileController::class, 'serveUserImage'])
+        ->where('path', '.*')
+        ->name('files.users.image');
+        
     Route::post('/web/logout', [LoginController::class, 'postLogout'])->name('web.logout.post');
 });
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function() {
