@@ -40,31 +40,63 @@ class GuruSiswaController extends Controller
     /**
      * Display list of students with latest mood (main page)
      */
-    public function moodIndex()
+    public function moodIndex(Request $request)
     {
-        $user = auth()->user();
-        if (!$user->profile || !$user->profile->id_kelas) {
-             return redirect()->route('guru.dashboard')->with('error', 'Silakan hubungkan kelas terlebih dahulu.');
-        }
+        $kelases = \App\Models\Kelas::orderBy('nama')->get();
+        $jenjangs = \App\Models\Kelas::select('jenjang')->distinct()->orderBy('jenjang')->pluck('jenjang');
+        $jurusans = \App\Models\Kelas::select('jurusan')->distinct()->whereNotNull('jurusan')->orderBy('jurusan')->pluck('jurusan');
 
-        $classId = $user->profile->id_kelas;
+        $query = Siswa::with([
+            'presensi' => function($query) {
+                return $query->latest('waktu')->limit(1)->with('diary');
+            },
+            'kelas_aktif',
 
-        $siswas = Siswa::with([
-            // 'presensi' => function($query) {
-            //     return $query->latest('waktu')->limit(1)->with('diary');
-            // },
             'recaps' => function($query) {
                 return $query->latest('created_at')->first();
             }
-        ])
-        ->whereHas('kelas_aktif', function($q) use ($classId) {
-            $q->where('kelas.id', $classId);
-        })
-        ->where(function($q) {
-            $q->where('need_selfcare', true)
-              ->orWhere('is_depressed', true);
-        })
-        ->get();
+        ]);
+
+        // Filter: Kelas
+        if ($request->filled('kelas')) {
+            $query->whereHas('kelas_aktif', function($q) use ($request) {
+                $q->where('kelas.id', $request->kelas);
+            });
+        }
+
+        // Filter: Gender
+        if ($request->filled('gender')) {
+            $genderVal = $request->gender === 'L' ? 1 : 0;
+            $query->where('gender', $genderVal);
+        }
+
+        // Filter: Jenjang
+        if ($request->filled('jenjang')) {
+            $query->whereHas('kelas_aktif', function($q) use ($request) {
+                $q->where('jenjang', $request->jenjang);
+            });
+        }
+
+        // Filter: Jurusan
+        if ($request->filled('jurusan')) {
+            $query->whereHas('kelas_aktif', function($q) use ($request) {
+                $q->where('jurusan', $request->jurusan);
+            });
+        }
+
+        // Filter: Search (Nama/NISN)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('nisn', 'like', "%{$search}%");
+            });
+        }
+        
+        // Only students who have taken DASS-21
+        $query->whereHas('recaps');
+        
+        $siswas = $query->get();
 
 
         $siswaData = $siswas->map(function($siswa) {
@@ -87,16 +119,28 @@ class GuruSiswaController extends Controller
 
             }
 
+            $status = 'selfcare';
+            $statusLabel = 'Dashboard Selfcare';
+            $statusColor = 'success';
+
+            if ($siswa->is_depressed || $siswa->need_selfcare) {
+                $status = 'warning';
+                $statusLabel = 'Perlu Perhatian';
+                $statusColor = 'warning';
+            }
+
             return [
                 'id' => $siswa->id,
                 'nama' => $siswa->nama_lengkap,
                 'last_update' => $lastPresensi ? $lastPresensi->waktu->format('d M Y H:i') : '-',
                 'mood_emoji' => $latestMoodLabel,
-                'mood_label' => $latestMoodLabel
+                'mood_label' => $latestMoodLabel,
+                'status_label' => $statusLabel,
+                'status_color' => $statusColor
             ];
         });
 
-        return view('guru.mood.index', compact('siswaData'));
+        return view('guru.mood.index', compact('siswaData', 'kelases', 'jenjangs', 'jurusans'));
     }
 
     /**
@@ -107,13 +151,7 @@ class GuruSiswaController extends Controller
         $user = auth()->user();
         $guru = $user->profile;
 
-        if (!$guru || !$guru->id_kelas) {
-             return redirect()->route('guru.dashboard');
-        }
-
-        $siswa = Siswa::whereHas('kelas_aktif', function($q) use ($guru) {
-            $q->where('kelas.id', $guru->id_kelas);
-        })->findOrFail($siswaId);
+        $siswa = Siswa::findOrFail($siswaId);
 
         // Get 14-day mood data
         $startDate = Carbon::now()->subDays(13);

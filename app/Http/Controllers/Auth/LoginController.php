@@ -31,24 +31,25 @@ class LoginController extends Controller implements HasMiddleware
     }
     public function postLogin(Request $request)
     {
-        $validator=Validator::make($request->all(), [
-            'username'=>'required',
-            'password'=>'required'
-        ]);
-        if($validator->fails())
-        {
-            $response=
-            [
-                'msg'=>'Input salah.',
-                'errs'=>$validator->errors()
-            ];
-            return back()->withErrors($response);
+        // Check if both fields are empty
+        if (empty($request->username) && empty($request->password)) {
+            return back()->withErrors(['login' => 'Harap isi username dan password']);
         }
 
-        
-        
-        
-        $credentials=$validator->validated();
+        // Check individual fields
+        if (empty($request->username)) {
+            return back()->withErrors(['username' => 'Harap isi username']);
+        }
+
+        if (empty($request->password)) {
+            return back()->withErrors(['password' => 'Harap isi password']);
+        }
+
+        $credentials = [
+            'username' => $request->username,
+            'password' => $request->password
+        ];
+
         if(Auth::guard('web')->attempt($credentials, $request->remember))
         {
             $request->session()->regenerate();
@@ -58,8 +59,9 @@ class LoginController extends Controller implements HasMiddleware
             $this->setQuetionaryStatus($user);
             return redirect("/$role/dashboard");
         }
-        $response=['credential'=>'username/password salah'];
-        return back()->withErrors($response);
+
+        // Incorrect credentials
+        return back()->withErrors(['credential' => 'Harap isi username dan password yang benar']);
     }
     public function postLogout(Request $request)
     {
@@ -73,7 +75,7 @@ class LoginController extends Controller implements HasMiddleware
     {
         $siswa=$user?->siswa;
 
-        if($user->role==="siswa" && (bool) $siswa?->need_survey===false)
+        if($user->role==="siswa" && $siswa && (bool) $siswa->need_survey===false)
         {
 
             try

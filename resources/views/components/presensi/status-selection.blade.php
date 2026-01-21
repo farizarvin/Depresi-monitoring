@@ -1,8 +1,8 @@
 <div class="mb-3">
-    <label class="form-label">Pilih Status Kehadiran</label>
+    <label class="form-label">Pilih Status Kehadiran <span class="text-danger">*</span></label>
     <div class="status-selection">
         <div class="status-option">
-            <input type="radio" name="status" id="hadir" value="H" class="status-radio" required>
+            <input type="radio" name="status" id="hadir" value="H" class="status-radio">
             <label for="hadir" class="status-label hadir">
                 <i class="bi bi-check-circle-fill status-icon hadir"></i>
                 <span class="status-text">Hadir</span>

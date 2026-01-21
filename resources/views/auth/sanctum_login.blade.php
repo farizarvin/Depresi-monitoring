@@ -26,12 +26,27 @@
             <div class="card login-card border-0 p-4">
                     <div class="card-body">
                         <div class="text-center mb-4">
-                            <h3 class="fw-bold text-primary">Sistem Akademik</h3>
+                            <h3 class="fw-bold text-primary">Dailyku</h3>
                             <p class="text-muted">Silakan masuk untuk melanjutkan</p>
                         </div>
 
                         <form id="loginForm" action="{{ route('web.login.post') }}" method="POST">
                             @csrf
+
+                            {{-- General Login Error (for both fields empty) --}}
+                            @if($errors->has('login'))
+                                <div class="alert alert-danger mb-3">
+                                    {{ $errors->first('login') }}
+                                </div>
+                            @endif
+
+                            {{-- Credential Error (incorrect username/password) --}}
+                            @if($errors->has('credential'))
+                                <div class="alert alert-danger mb-3">
+                                    {{ $errors->first('credential') }}
+                                </div>
+                            @endif
+
                             <div class="mb-3">
                                 <label for="username" class="form-label fw-medium">Username</label>
                                 <input 
@@ -41,7 +56,6 @@
                                     class="form-control @error('username') is-invalid @enderror"
                                     placeholder="Masukkan username"
                                     value="{{ old('username') }}"
-                                    required 
                                     autofocus
                                 >
                                 @error('username')
@@ -60,7 +74,6 @@
                                         name="password"
                                         class="form-control @error('password') is-invalid @enderror"
                                         placeholder="Masukkan password"
-                                        required
                                     >
                                     <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                         <i class="bi bi-eye-slash" id="toggleIcon"></i>
@@ -72,13 +85,6 @@
                                     </div>
                                 @enderror
                             </div>
-
-                            {{-- Error Message for Credentials --}}
-                            @if($errors->has('credential'))
-                                <div class="alert alert-danger mb-3">
-                                    {{ $errors->first('credential') }}
-                                </div>
-                            @endif
 
                             <div class="d-grid gap-2 mt-4">
                                 <button type="submit" class="btn btn-primary py-2 fw-semibold">

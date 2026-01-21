@@ -3,7 +3,7 @@
 @section('title', 'Absensi - Sistem Manajemen Siswa')
 
 @php
-    $pageTitle = 'Presensi Siswa';
+    $pageTitle = 'Absensi Siswa';
     $pageSubtitle = 'Catat kehadiran dan kelola riwayat absensi Anda';
 @endphp
 
@@ -30,25 +30,25 @@
 
             {{-- Webcam Section --}}
             <div class="upload-section">
-                <label class="form-label">Ambil Foto Selfie</label>
-                <div class="webcam-container text-center">
-                    <div id="cameraArea" class="mb-3">
-                        <video id="webcam" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 10px; display: none;"></video>
+                <label class="form-label">Ambil Foto Selfie <span class="text-danger">*</span></label>
+                <div class="webcam-container" style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                    <div id="cameraArea" class="mb-3" style="width: 100%; display: flex; justify-content: center;">
+                        <video id="webcam" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 10px; display: none; transform: scaleX(-1);"></video>
                         <canvas id="canvas" style="display: none;"></canvas>
-                        <div id="placeholder" class="p-5 bg-light rounded border" style="cursor: pointer;">
+                        <div id="placeholder" class="p-5 bg-light rounded border" style="cursor: pointer; width: 100%; max-width: 400px; text-align: center;">
                             <i class="bi bi-camera-fill fs-1 text-muted"></i>
                             <p class="mt-2 text-muted">Klik untuk aktifkan kamera</p>
                         </div>
                     </div>
                     
-                    <div id="previewArea" style="display: none;" class="mb-3 position-relative">
-                        <img id="photoPreview" src="" class="img-fluid rounded" style="width: 100%; max-width: 400px;">
-                        <button type="button" id="retakeBtn" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2">
+                    <div id="previewArea" style="display: none; flex-direction: column; align-items: center; gap: 0.75rem;" class="mb-3">
+                        <img id="photoPreview" src="" class="img-fluid rounded" style="width: 100%; max-width: 400px; transform: scaleX(-1);">
+                        <button type="button" id="retakeBtn" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 500; white-space: nowrap;">
                             <i class="bi bi-arrow-counterclockwise"></i> Foto Ulang
                         </button>
                     </div>
 
-                    <button type="button" id="captureBtn" class="btn btn-primary w-100" style="display: none;">
+                    <button type="button" id="captureBtn" class="btn btn-primary" style="display: none; width: 100%; max-width: 400px;">
                         <i class="bi bi-camera"></i> Ambil Foto
                     </button>
                 </div>
@@ -62,6 +62,12 @@
             <input type="hidden" name="swafoto_pred" id="swafotoPred">
             <input type="hidden" name="catatan_pred" id="catatanPred">
             <input type="hidden" name="catatan_ket" id="catatanKet">
+
+            {{-- Error Message Container --}}
+            <div id="errorContainer" class="alert alert-danger" style="display: none;" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="errorMessage"></span>
+            </div>
 
             <button type="submit" class="btn-submit">Kirim Absensi</button>
         </form>
@@ -133,9 +139,9 @@
         }
     });
 
-    // API Config
-    const API_FACE_URL = "https://risetkami-risetkami.hf.space/predict_face";
-    const API_TEXT_URL = "https://risetkami-risetkami.hf.space/predict_text";
+    // API Config (from Laravel environment)
+    const API_FACE_URL = "{{ config('prediction.face_url') }}";
+    const API_TEXT_URL = "{{ config('prediction.text_url') }}";
 
     // Prediction Functions
     async function predictFace(file) {
@@ -208,7 +214,7 @@
 
             // Show preview
             photoPreview.src = URL.createObjectURL(blob);
-            previewArea.style.display = 'block';
+            previewArea.style.display = 'flex';
             video.style.display = 'none';
             captureBtn.style.display = 'none';
             
@@ -222,31 +228,68 @@
         }, 'image/jpeg');
     });
 
+    // Error Display Function
+    function showError(message) {
+        const errorContainer = document.getElementById('errorContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+        errorContainer.style.display = 'block';
+        errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function hideError() {
+        const errorContainer = document.getElementById('errorContainer');
+        errorContainer.style.display = 'none';
+    }
+
     // Form Submit with Text Prediction
     document.getElementById('absensiForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // Hide previous errors
+        hideError();
+        
         const status = document.querySelector('input[name="status"]:checked');
         
         if (!status) {
-            alert('Mohon pilih status kehadiran!');
+            showError('Harap pilih status kehadiran!');
+            return;
+        }
+
+        // Validasi Foto Selfie
+        if (!swafotoInput.files || swafotoInput.files.length === 0) {
+            showError('Harap ambil foto selfie terlebih dahulu!');
             return;
         }
 
         if (status.value === 'I') {
-            const alasanIzin = document.getElementById('alasanIzin').value;
+            const alasanIzin = document.getElementById('alasanIzin').value.trim();
             if (!alasanIzin) {
-                alert('Mohon isi alasan izin!');
+                showError('Harap isi alasan izin!');
                 return;
             }
         }
 
         if (status.value === 'S') {
-            const jenisSakit = document.getElementById('jenisSakit').value;
+            const jenisSakit = document.getElementById('jenisSakit').value.trim();
             if (!jenisSakit) {
-                alert('Mohon isi jenis sakit!');
+                showError('Harap isi jenis sakit!');
                 return;
             }
+        }
+
+        // Validasi Bagaimana Perasaan
+        const perasaan = document.querySelector('textarea[name="perasaan"]').value.trim();
+        if (!perasaan) {
+            showError('Harap isi bagaimana perasaan hari ini!');
+            return;
+        }
+
+        // Validasi Ceritakan Perasaan
+        const catatan = document.querySelector('textarea[name="catatan"]').value.trim();
+        if (!catatan) {
+            showError('Harap ceritakan perasaan hari ini!');
+            return;
         }
 
         // Show loading state
@@ -357,59 +400,117 @@
     const today = new Date();
     document.getElementById('currentDate').textContent = today.toLocaleDateString('id-ID', options);
 
-    // File Upload Logic
-    function setupFileUpload(areaId, inputId, previewContainerId, previewImageId, removeBtnId) {
+    // File Upload Logic - Improved Cancel Handling & Inline Errors
+    function setupFileUpload(areaId, inputId, previewContainerId, previewImageId, removeBtnId, errorContainerId, errorTextId) {
         const area = document.getElementById(areaId);
         const input = document.getElementById(inputId);
         const container = document.getElementById(previewContainerId);
         const img = document.getElementById(previewImageId);
         const removeBtn = document.getElementById(removeBtnId);
+        const errorContainer = document.getElementById(errorContainerId);
+        const errorText = document.getElementById(errorTextId);
+
+        let isDialogOpen = false;
+        let lastValue = '';
+
+        // Function to show error
+        function showError(message) {
+            errorText.textContent = message;
+            errorContainer.style.display = 'block';
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
+        }
+
+        // Function to hide error
+        function hideError() {
+            errorContainer.style.display = 'none';
+        }
 
         // Trigger input click
-        area.addEventListener('click', () => input.click());
+        area.addEventListener('click', () => {
+            isDialogOpen = true;
+            lastValue = input.value;
+            hideError(); // Hide any previous errors
+            input.click();
+        });
 
         // Handle file selection
         input.addEventListener('change', function() {
+            isDialogOpen = false;
+            hideError(); // Hide errors on new selection
+            
             if (this.files && this.files[0]) {
                 const file = this.files[0];
                 
                 // Validate size (10MB)
                 if (file.size > 10 * 1024 * 1024) {
-                    alert('Ukuran file terlalu besar! Maksimal 10MB.');
+                    showError('Ukuran file terlalu besar! Maksimal 10MB.');
+                    this.value = '';
+                    // Ensure upload area is visible and properly styled
+                    area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+                    container.style.display = 'none';
+                    return;
+                }
+
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+                if (!validTypes.includes(file.type)) {
+                    showError('Format file tidak valid! Hanya JPG, PNG, atau PDF.');
                     this.value = '';
                     return;
                 }
 
+                hideError();
                 area.style.display = 'none';
-                container.style.display = 'block';
+                container.style.display = 'flex';
 
                 if (file.type === 'application/pdf') {
-                    // Show PDF placeholder
-                    img.src = 'https://cdn-icons-png.flaticon.com/512/337/337946.png'; // Generic PDF icon
+                    img.src = 'https://cdn-icons-png.flaticon.com/512/337/337946.png';
                     img.style.objectFit = 'contain';
                 } else {
-                    // Show Image preview
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         img.src = e.target.result;
                         img.style.objectFit = 'cover';
                     }
+                    reader.onerror = () => {
+                        showError('Gagal membaca file. Silakan coba lagi.');
+                        this.value = '';
+                        area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+                        container.style.display = 'none';
+                    };
                     reader.readAsDataURL(file);
                 }
             }
         });
 
+        // Detect cancel with blur + focus events
+        input.addEventListener('blur', function() {
+            setTimeout(() => {
+                if (isDialogOpen && input.value === lastValue) {
+                    isDialogOpen = false;
+                    area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+                    container.style.display = 'none';
+                }
+            }, 100);
+        });
+
         // Handle remove
         removeBtn.addEventListener('click', function() {
             input.value = '';
-            area.style.display = 'flex'; // Restore flex display
+            lastValue = '';
+            hideError();
+            area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
             container.style.display = 'none';
             img.src = '';
+            isDialogOpen = false;
         });
     }
 
-    // Initialize file uploads
-    setupFileUpload('uploadAreaIzin', 'fileInputIzin', 'previewContainerIzin', 'previewImageIzin', 'removeImageIzin');
-    setupFileUpload('uploadAreaSakit', 'fileInputSakit', 'previewContainerSakit', 'previewImageSakit', 'removeImageSakit');
+    // Initialize file uploads with error containers
+    setupFileUpload('uploadAreaIzin', 'fileInputIzin', 'previewContainerIzin', 'previewImageIzin', 'removeImageIzin', 'uploadErrorIzin', 'uploadErrorTextIzin');
+    setupFileUpload('uploadAreaSakit', 'fileInputSakit', 'previewContainerSakit', 'previewImageSakit', 'removeImageSakit', 'uploadErrorSakit', 'uploadErrorTextSakit');
 </script>
 @endsection

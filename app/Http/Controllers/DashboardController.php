@@ -181,10 +181,12 @@ class DashboardController extends Controller implements HasMiddleware
     public function guruDashboard()
     {
         $user = \Illuminate\Support\Facades\Auth::user();
-        $guru = $user->profile;
-        $hasClass = $guru && $guru->id_kelas;
-        $kelas = $hasClass ? $guru->kelas : null;
+        
+        // Global Stats
+        $totalSiswa = \App\Models\Siswa::count();
+        $todayPresence = \App\Models\Presensi::whereDate('waktu', Carbon::today())->count();
+        $totalClasses = \App\Models\Kelas::count();
 
-        return view('dashboard.guru', compact('hasClass', 'kelas'));
+        return view('dashboard.guru', compact('totalSiswa', 'todayPresence', 'totalClasses'));
     }
 }

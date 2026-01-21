@@ -22,11 +22,11 @@ class ImageController extends Controller implements HasMiddleware
     public function webGet($mime,$type,$id_col,$id,$filepath)
     {
         $user=Auth::guard('web')->user();
-        $path="app/data/$mime/$type/$id";
+        $path="data/$mime/$type/$id";
 
         if($user->get($id_col)!=$id && $user->role!='admin')
         {
-            $path="app/data/$mime/$type";
+            $path="data/$mime/$type";
             $file=Storage::disk('private')->path("$path/default.png");
             return response()->file($file)->setStatusCode(403, 'Unauthorized access');
         }
@@ -34,7 +34,7 @@ class ImageController extends Controller implements HasMiddleware
         $file=Storage::disk('private')->exists("$path/$filepath");
         if($file==false)
         {
-            $path="app/data/$mime/$type";
+            $path="data/$mime/$type";
             $file=Storage::disk('private')->path("$path/default.png");
             return response()->file($file)->setStatusCode(200, "Default $mime");
         }
@@ -44,7 +44,7 @@ class ImageController extends Controller implements HasMiddleware
     }
     public function webDefault($mime,$type)
     {
-        $path="app/data/$mime/$type";
+        $path="data/$mime/$type";
         $file=Storage::disk('private')->path("$path/default.png");
         return response()->file($file)->setStatusCode(200, "Default $mime");
     }

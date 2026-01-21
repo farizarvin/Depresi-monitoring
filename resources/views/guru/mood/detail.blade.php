@@ -13,8 +13,8 @@
     <a href="{{ route('guru.mood.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
         <i class="bi bi-arrow-left me-2"></i> Kembali
     </a>
-    <a href="{{ route('guru.mood.export', $siswa->id) }}" class="btn btn-success rounded-pill px-4">
-        <i class="bi bi-download me-2"></i> Download CSV
+    <a href="{{ route('guru.mood.export', $siswa->id) }}" class="btn btn-danger rounded-pill px-4">
+        <i class="bi bi-file-earmark-pdf me-2"></i> Download PDF
     </a>
 </div>
 

@@ -62,7 +62,6 @@
                             <tr>
                                 <th scope="col" class="text-center py-3 fw-medium">No</th>
                                 <th scope="col" class="py-3 fw-medium">Nama Kelas</th>
-                                <th scope="col" class="py-3 fw-medium">Token</th>
                                 <th scope="col" class="py-3 fw-medium">Jenjang</th>
                                 <th scope="col" class="py-3 fw-medium">Jurusan</th>
                                 <th scope="col" class="py-3 fw-medium" style="width: 120px;">Aksi</th>
@@ -73,9 +72,6 @@
                                 <tr :class="{'table-active' : (selected_id=={{ $row->id }})}">
                                     <td class="text-center">{{ $i + 1 }}</td>
                                     <td>{{ $row->nama}}</td>
-                                    <td>
-                                        <span class="badge bg-light text-dark font-monospace border">{{ $row->token }}</span>
-                                    </td>
                                     <td>{{ $row->jenjang }}</td>
                                     <td>{{ $row->jurusan }}</td>
                                     <td class="">

@@ -226,8 +226,8 @@ class PresensiController extends Controller
     }
     private function predictMental($selfie, $note)
     {
-        $API_FACE_URL = "https://risetkami-risetkami.hf.space/predict_face";
-        $API_TEXT_URL = "https://risetkami-risetkami.hf.space/predict_text";
+        $API_FACE_URL = config('prediction.face_url');
+        $API_TEXT_URL = config('prediction.text_url');
         $faceRes=Http::attach('file', $selfie, 'selfie.jpg')->post($API_FACE_URL);
         $textRes=Http::post($API_TEXT_URL, ['text'=>$note]);
 

@@ -108,6 +108,13 @@ class SiswaController extends Controller
      */
     public function store(SiswaStoreRequest $request)
     {
+        // DEBUG logging untuk troubleshooting
+        \Log::info('Store request received', [
+            'has_file' => $request->hasFile('avatar'),
+            'file_in_request' => $request->has('avatar'),
+            'all_files' => $request->allFiles(),
+        ]);
+
         $validated=$request->validated();
         
         DB::beginTransaction();
@@ -151,7 +158,12 @@ class SiswaController extends Controller
             if($file)
             {
                 $path="app/data/images/users/$user->id";
-                $file->storeAs($path, $fileName, "private");
+                $storedPath = $file->storeAs($path, $fileName, "private");
+                
+                \Log::info('File storage result', [
+                    'stored_path' => $storedPath,
+                    'exists' => \Storage::disk('private')->exists($storedPath)
+                ]);
             }
             DB::commit();
             return redirect()->route('admin.siswa.index')
@@ -201,6 +213,13 @@ class SiswaController extends Controller
      */
     public function update(SiswaUpdateRequest $request, Siswa $siswa)
     {
+        // DEBUG logging untuk troubleshooting
+        \Log::info('Update request received', [
+            'has_file' => $request->hasFile('avatar'),
+            'file_in_request' => $request->has('avatar'),
+            'all_files' => $request->allFiles(),
+        ]);
+
         $student=$siswa;
         if($student==null)
         {
@@ -265,12 +284,19 @@ class SiswaController extends Controller
             if($file)
             {
                 $path="app/data/images/users/$relatedUser->id";
-                $file->storeAs($path, $fileName, "private");
+                $storedPath = $file->storeAs($path, $fileName, "private");
                 
-                $oldProfilePath=$path.$relatedUser->avatar_url;
+                \Log::info('File storage result', [
+                    'stored_path' => $storedPath,
+                    'exists' => \Storage::disk('private')->exists($storedPath)
+                ]);
+
+                $oldProfilePath=$path.'/'.$relatedUser->avatar_url;
                 $oldProfileExists=Storage::disk('private')->exists($oldProfilePath);
-                if($oldProfileExists)
+                if($oldProfileExists) {
                     Storage::disk('private')->delete($oldProfilePath);
+                    \Log::info('Old profile deleted', ['path' => $oldProfilePath]);
+                }
             }
             DB::commit();
             return redirect()->route('admin.siswa.index')

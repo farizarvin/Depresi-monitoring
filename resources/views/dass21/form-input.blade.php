@@ -266,7 +266,7 @@
             }
         } catch (e) {
             console.error(e);
-            alert('Terjadi kesalahan koneksi.');
+            alert('Terjadi kesalahan koneksi. Silakan coba lagi.');
             nextBtn.disabled = false;
             nextBtn.innerHTML = 'Kirim <i class="bi bi-send-fill ms-1"></i>';
         }
