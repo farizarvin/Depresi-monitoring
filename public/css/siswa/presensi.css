@@ -225,8 +225,18 @@
 }
 
 .preview-container {
-    margin-top: 0.75rem;
     display: none;
+    /* Hidden by default */
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1rem;
+    position: relative;
+}
+
+.preview-container.show {
+    display: flex;
+    /* Show as flex when active */
 }
 
 .preview-image {

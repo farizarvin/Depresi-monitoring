@@ -464,7 +464,7 @@
 
                 hideError();
                 area.style.display = 'none';
-                container.style.display = 'flex';
+                container.classList.add('show'); // Use class instead of inline style
 
                 if (file.type === 'application/pdf') {
                     img.src = 'https://cdn-icons-png.flaticon.com/512/337/337946.png';
@@ -492,7 +492,7 @@
                 if (isDialogOpen && input.value === lastValue) {
                     isDialogOpen = false;
                     area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';
-                    container.style.display = 'none';
+                    container.classList.remove('show'); // Use class instead of inline style
                 }
             }, 100);
         });
@@ -503,8 +503,8 @@
             lastValue = '';
             hideError();
             
-            // Hide preview container properly
-            container.style.display = 'none';
+            // Hide preview container using class
+            container.classList.remove('show');
             
             // Show upload area with full styling
             area.style.cssText = 'border: 2px dashed #D1D5DB; border-radius: 0.75rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: #F9FAFB; display: flex; flex-direction: column; align-items: center; justify-content: center;';

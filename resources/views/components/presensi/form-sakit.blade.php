@@ -15,7 +15,7 @@
         <p class="upload-subtext">JPG, PNG, PDF maksimal 10MB</p>
         <input type="file" id="fileInputSakit" class="file-input" accept="image/jpeg,image/png,image/jpg,application/pdf">
     </div>
-    <div class="preview-container" id="previewContainerSakit" style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center;">
+    <div class="preview-container" id="previewContainerSakit">
         <img id="previewImageSakit" class="preview-image" alt="Preview" style="width: 100%; max-width: 400px;">
         <button type="button" class="btn btn-danger btn-sm" id="removeImageSakit" style="width: 100%; max-width: 400px;">
             <i class="bi bi-x-circle"></i> Hapus
