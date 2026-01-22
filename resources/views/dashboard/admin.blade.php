@@ -63,6 +63,38 @@
             const end = this.selectedDates[1] || start;
             const chosen=start <= date && end >= date;
             return chosen;
+        async submitEventForm(event) {
+            const form = event.target;
+            const month = new Date().getMonth() + 1;
+            
+            // Validate selection
+            if(this.selectedDates.length === 0) {
+                // Optional: Alert user to select date
+                return;
+            }
+
+            document.getElementById('tanggal_mulai').value = this.selectedDates[0];
+            document.getElementById('tanggal_selesai').value = this.selectedDates[1] || this.selectedDates[0];
+            document.getElementById('bulan_mulai').value = month;
+            document.getElementById('bulan_selesai').value = month;
+
+            form.submit();
+        },
+        checkVacant(date) {
+            if(!this.vacations || !Array.isArray(this.vacations)) {
+                console.warn('Vacations data missing or invalid');
+                return false;
+            }
+            return this.vacations.some(vacation => {
+                return (vacation.tanggal_mulai <= date && date <= vacation.tanggal_selesai);
+            });
+        },
+        handleDateClick(date) {
+            if(this.isEditing) {
+                this.chooseDate(date);
+            } else {
+                this.showEvents(date);
+            }
         }
     }"
 
@@ -229,7 +261,7 @@
                                 <tbody>
                                    
                                         
-                                    <template x-for="week in calendars" :key="index">
+                                    <template x-for="(week, weekIndex) in calendars" :key="weekIndex">
                                         <tr>
                                             <template x-for="i in week[0].day">
                                                 <td class="col p-0 bg-light">
@@ -237,24 +269,14 @@
                                                 </td>
                                             </template>
                                         
-                                            <template x-for="day in week" :key="index+250">
+                                            <template x-for="day in week" :key="day.date">
                                                 <td class="col p-0" style="box-sizing: border-box;">
                                                     <template x-if="([5,6]).includes(day.day)">
                                                         <button 
                                                         type="button"
                                                         class="w-100 h-100  px-0 rounded-0 border-0  position-relative btn btn-outline-light text-muted" disabled
-                                                        x-data="{
-                                                            vacant : false,
-                                                            setLibur() {
-                                                                current=day.date;   
-                                                                this.vacant=vacations.some(vacation=>{
-                                                                    return (vacation.tanggal_mulai <= current && current <= vacation.tanggal_selesai);
-                                                                })
-                                                            }
-                                                        }"
-                                                        x-init="setLibur()"
                                                         >
-                                                            <div :class="{'bg-warning-subtle' : vacant}" x-text="day.date">
+                                                            <div :class="{'bg-warning-subtle' : checkVacant(day.date)}" x-text="day.date">
                                                                 
                                                             </div>
                                                         </button>
@@ -262,30 +284,12 @@
 
                                                     <template x-if="!([5,6]).includes(day.day)">
                                                         <button 
-                                                        
                                                         type="button"
                                                         class="w-100 h-100  px-0 rounded-0 border-0  position-relative text-body" 
-                                                        
-                                                        x-data="{
-                                                            vacant : false,
-                                                            setLibur() {
-                                                                current=day.date    
-                                                                this.vacant=vacations.some(vacation=>{
-                                                                    return (vacation.tanggal_mulai <= current && current <= vacation.tanggal_selesai);
-                                                                })
-                                                            },
-                                                            handleClick() {
-                                                                if(isEditing) chooseDate(day.date);
-                                                                else showEvents(day.date)
-                                                            }
-                                                        }"
                                                         :class="isChosen(day.date) ? 'btn bg-light' : 'btn btn-outline-light'"
-                                                        x-on:click='handleClick'
-
-                                                        x-init="setLibur()">
-                                                            
-                                                            <div :class="{'bg-warning-subtle' : vacant}" x-text="day.date">
-                                                                
+                                                        x-on:click='handleDateClick(day.date)'
+                                                        >
+                                                            <div :class="{'bg-warning-subtle' : checkVacant(day.date)}" x-text="day.date">
                                                             </div>
                                                         </button>
                                                     </template>
@@ -338,20 +342,8 @@
 
         <!-- Application / Info Column -->
         <div class="col-12 col-md-12 col-xl-3 mb-4">
-            <form action="{{ route('admin.presensi-libur.store') }}" method="post" x-data="{
-                async submitForm(event) {
-                    const form = event.target;
-                    const month = new Date().getMonth() + 1;
-                    document.getElementById('tanggal_mulai').value= selectedDates[0]
-                    document.getElementById('tanggal_selesai').value= selectedDates[1] || selectedDates[0]
-                    document.getElementById('bulan_mulai').value= month
-                    document.getElementById('bulan_selesai').value= month
-
-
-                    form.submit();
-                }
-            }"
-            @submit.prevent="submitForm">
+            <form action="{{ route('admin.presensi-libur.store') }}" method="post" 
+            @submit.prevent="submitEventForm($event)">
                 @csrf
                 <div class="card shadow-sm mb-4">
                     <div class="card-header py-4 bg-warning bg-gradient bg-opacity-50">

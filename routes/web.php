@@ -115,8 +115,8 @@ Route::group(['middleware'=>['auth']], function() {
 
 // 4. Admin Routes (Akses: Auth + Role Admin)
 Route::group(['middleware'=>['auth', 'role:admin']], function() {
-    // Dashboard Admin (Ditambahkan nama route)
-    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+    // Dashboard Admin (Moved to Livewire)
+    Route::get('/admin/dashboard', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
 
     // Route::view('/admin/kelas', 'admin.kelas.index')->name('admin.kelas.index');
     // Route::view('/admin/tahun-akademik', 'admin.tahun_akademik.index')->name('admin.ta.index');
