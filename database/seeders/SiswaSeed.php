@@ -67,7 +67,7 @@ class SiswaSeed extends Seeder
             $data=
             [
                 'username'=>$sis['nisn'],
-                'password'=>"Nubi_".Carbon::parse($sis['tanggal_lahir'])->format('dmY'),
+                'password'=>"Nubi-".Carbon::parse($sis['tanggal_lahir'])->format('dmY'),
                 'email'=>implode(explode(' ', $sis['nama_lengkap']))."@example.com",
                 'role'=>'siswa',
             ];

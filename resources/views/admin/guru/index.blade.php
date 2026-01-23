@@ -229,6 +229,7 @@
                             current_user_id: `{{ old('id_user') }}`,
                             img_preview: null,
                             has_new_upload: false,
+                            error_message: null,
                             
                             cleanup() {
                                 if(this.img_preview && this.img_preview.startsWith('blob:')) {
@@ -239,6 +240,7 @@
                             
                             reset_preview() {
                                 this.cleanup();
+                                this.error_message = null;
                                 this.has_new_upload = false;
                                 if(this.$refs.img_upload) {
                                     this.$refs.img_upload.value = null;
@@ -266,9 +268,27 @@
                             
                             handleFileSelect(event) {
                                 this.cleanup();
-                                this.has_new_upload = true;
+                                this.error_message = null;
                                 const file = event.target.files[0];
                                 if(file) {
+                                    // Validation Type (Images Only)
+                                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                                    if (!validTypes.includes(file.type)) {
+                                        event.target.value = null;
+                                        this.reset_preview();
+                                        this.error_message = 'Hanya file gambar (JPG, JPEG, PNG) yang diperbolehkan.';
+                                        return;
+                                    }
+
+                                    // Validation Size (512KB)
+                                    if(file.size > 512 * 1024) {
+                                        event.target.value = null; // Clear input
+                                        this.reset_preview();
+                                        this.error_message = 'Maksimal ukuran file adalah 512KB';
+                                        return;
+                                    }
+
+                                    this.has_new_upload = true;
                                     this.img_preview = URL.createObjectURL(file);
                                 }
                             }
@@ -292,10 +312,13 @@
                         type="file" 
                         x-ref="img_upload"  
                         id="avatar_field" 
-                        class="form-control form-control-sm d-block" 
+                        class="form-control-file form-control-file-sm d-block" 
+                        accept="image/jpeg,image/jpg,image/png"
                         x-on:change="handleFileSelect($event)"
                         name="avatar">
+                        <small class="text-muted d-block mt-1">Format: JPG, PNG. Maksimal: 512KB</small>
                         <x-form-error-text :field="'avatar'" />
+                        <div x-show="error_message" x-text="error_message" class="text-danger small mt-1"></div>
 
                     </div>
                     <div class="mb-3">

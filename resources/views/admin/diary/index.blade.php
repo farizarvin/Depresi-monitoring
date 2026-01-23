@@ -316,8 +316,8 @@
         document.getElementById('modalStudentNisn').textContent = `NISN: ${student.nisn}`;
         
         const avatarUrl = student.user?.avatar_url 
-            ? `http://localhost:8000/files/images/users/id/${student.id_user}/${student.user.avatar_url}`
-            : 'http://localhost:8000/files/images/users/default';
+            ? `/files/images/users/${student.id_user}/${student.user.avatar_url}`
+            : '/files/images/users/default';
         document.getElementById('modalStudentAvatar').src = avatarUrl;
         
         // Populate history table

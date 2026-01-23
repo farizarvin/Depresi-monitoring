@@ -123,7 +123,7 @@
                                 {
                                     this.reset_preview();
                                     const id=$wire.id_user
-                                    const url=this.img_url ? `id/${id}/${this.img_url==''?'p':this.img_url}` : 'default'
+                                    const url=this.img_url ? `${id}/${this.img_url==''?'p':this.img_url}` : 'default'
                                     const res=await fetch(`/files/images/users/${url}`)
                                     const blob=await res.blob();
                                     

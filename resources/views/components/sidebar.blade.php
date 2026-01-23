@@ -17,7 +17,11 @@
     @endphp
     <div class="user-container">
         <div class="user-profile">
-            <div class="user-avatar">{{ $initials }}</div>
+            @if(Illuminate\Support\Facades\Auth::user()->avatar_url)
+                <img src="{{ route('files.users.image', ['path' => Illuminate\Support\Facades\Auth::user()->id . '/' . Illuminate\Support\Facades\Auth::user()->avatar_url]) }}" alt="Profile" class="user-avatar" style="object-fit: cover;">
+            @else
+                <div class="user-avatar">{{ $initials }}</div>
+            @endif
             <div class="user-info">
                 <p class="user-name">{{ $namaLengkap }}</p>
                 <p class="user-role">Siswa</p>

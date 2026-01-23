@@ -65,7 +65,7 @@ class GuruController extends Controller
 
             // Create Data User
             $birthDate = Carbon::parse($validated['tgl_lahir'])->format('dmY');
-            $password = 'Guru_' . $birthDate;
+            $password = 'Nubi-' . $birthDate;
             $userData = [
                 'email' => $validated['email'],
                 'username' => $validated['nip'],
@@ -133,7 +133,7 @@ class GuruController extends Controller
 
             // Update Data User
             $birthDate = Carbon::parse($validated['tgl_lahir'])->format('dmY');
-            $password = 'Guru_' . $birthDate;
+            $password = 'Nubi-' . $birthDate;
             $userData = [
                 'email' => $validated['email'],
                 'username' => $validated['nip'],
