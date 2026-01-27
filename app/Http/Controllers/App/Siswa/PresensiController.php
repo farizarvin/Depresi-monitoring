@@ -98,13 +98,12 @@ class PresensiController extends Controller
             throw ValidationException::withMessages(['wkt'=>"Presensi sudah ditutup"]);
 
     }
-    private function cekLimitPresensi($studentId, $config)
+    private function cekLimitPresensi($studentId)
     {
         $current=now();
-        $limit=(int) $config['limit_absen'];
-        $attendances=Presensi::where('id_siswa', $studentId)->whereDate('waktu', $current->format('Y-m-d'))->get();
-        if($attendances->count() > $limit)
-            throw ValidationException::withMessages(['attendance'=>'Presensi melebihi batas']);
+        $attendances=Presensi::where('id_siswa', $studentId)->whereDate('waktu', $current->format('Y-m-d'))->count();
+        if($attendances >= 1)
+            throw ValidationException::withMessages(['attendance'=>'Anda sudah melakukan presensi hari ini']);
     }
     public function create()
     {
@@ -178,7 +177,7 @@ class PresensiController extends Controller
             // Check Time
             $date=now()->format('Y-m-d');
             $this->cekPresensi($date, $student->getActiveClass()?->jenjang);
-            $this->cekLimitPresensi($student->id, $config);
+            $this->cekLimitPresensi($student->id);
             $this->cekLibur($date);
             
             // Set Variables

@@ -67,7 +67,7 @@
     @yield('scripts')
     <script>
         window.addEventListener('swal:alert', event => {
-            console.log('test');
+
             const icon=event.detail.icon || 'info';
             let textColor='text-white';
             let bgColor;
@@ -129,20 +129,20 @@
     @if(session()->has('success'))
         
         <script>
-            console.log('Success')
+
             setTimeout(()=>{window.dispatchEvent(new CustomEvent('swal:alert', {detail : @json(session('success'))}))}, 400)
         </script>
     @endif
     @if(session()->has('alert'))
         <script>
-            console.log('Alerting')
+
             alert("{{ session('alert')['text'] }}")
         </script>
     @endif
     @if(session()->has('error'))
     
         <script>
-            console.log('Error')
+
             setTimeout(()=>{window.dispatchEvent(new CustomEvent('swal:alert', {detail : @json(session('error'))}))}, 400)
         </script>
     @endif

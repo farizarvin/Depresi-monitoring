@@ -364,22 +364,17 @@ class GuruSiswaController extends Controller
             $manualMood = '-';
 
             if ($presensi->diary) {
-                // Camera Prediction
+                // Camera Prediction - Read directly from swafoto_pred
                 if ($presensi->diary->swafoto_pred) {
-                    try {
-                        $pred = json_decode($presensi->diary->swafoto_pred);
-                        if (isset($pred->predicted)) {
-                            $emotionLabel = ucfirst($pred->predicted);
-                            $emotionEmoji = $this->getEmoji($emotionLabel);
-                        }
-                    } catch (\Exception $e) {}
+                    $emotionLabel = ucfirst($presensi->diary->swafoto_pred);
+                    $emotionEmoji = $this->getEmoji($emotionLabel);
                 }
 
                 // Text Prediction
                 $textPred = $presensi->diary->catatan_pred ?? '-';
 
-                // Manual Mood (Text Input)
-                $manualMood = $presensi->diary->judul_perasaan ?? '-';
+                // Manual Mood (Text Input) - Use catatan_ket column
+                $manualMood = $presensi->diary->catatan_ket ?? '-';
             }
 
             return [

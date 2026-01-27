@@ -95,7 +95,7 @@
                                         role="button"
                                         class="btn btn-sm btn-warning"
                                         x-on:click="event.preventDefault();selected_id=`{{ $row->id }}`"
-                                        onclick="editForm(`{{ $row->id }}`, `{{ route('admin.siswa.update', ['siswa'=>$row->id]) }}`, `{{ $row->user->id }}`)"
+                                        onclick="editForm(`{{ $row->id }}`, `{{ route('admin.siswa.update', ['siswa'=>$row->id]) }}`, `{{ $row->user?->id }}`)"
                                         >
                                             <i class="fas fa-edit"></i>
                                         </a>

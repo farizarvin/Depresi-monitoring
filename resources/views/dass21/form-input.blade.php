@@ -253,7 +253,7 @@
             });
 
             const data = await response.json();
-            console.log(data);
+
 
             if (response.ok) {
                 // Show completion message only after success

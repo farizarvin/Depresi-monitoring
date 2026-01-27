@@ -281,19 +281,12 @@
             const response = await fetch(route);
             const json = await response.json();
 
-            console.log('Full API Response:', json);
-            console.log('Response structure:', Object.keys(json));
+
             
             if (json.response) {
                 const { student, attendances, diary_entries, has_attendances, has_diary } = json.response;
                 
-                console.log('Parsed data:', {
-                    student,
-                    attendances_count: attendances?.length,
-                    diary_count: diary_entries?.length,
-                    has_attendances,
-                    has_diary
-                });
+
                 
                 // Update student info
                 document.getElementById('studentName').textContent = student.nama_lengkap;

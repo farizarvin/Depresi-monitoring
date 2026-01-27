@@ -123,7 +123,7 @@
                     setSchedule() 
                     {
                         this.schedule=this.data[this.grade]
-                        console.log(this.schedule);
+
                     },
                     async initData()
                     {

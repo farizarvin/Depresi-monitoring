@@ -377,7 +377,7 @@
     }
     
     function loadMoodChart(history) {
-        console.log('loadMoodChart called, history items:', history.length);
+
         const emotionLabels = {
             1: "sadness",
             2: "anger",
@@ -397,7 +397,7 @@
             xLabels.push(date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }));
         });
         
-        console.log('Chart data prepared:', { dataPoints: data.length, labels: xLabels.length });
+
         
         const ctx = document.getElementById('modalMoodChart');
         if (!ctx) {

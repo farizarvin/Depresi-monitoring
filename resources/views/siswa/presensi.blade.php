@@ -145,7 +145,7 @@
 
     // Prediction Functions
     async function predictFace(file) {
-        console.log('🖼️ Starting Face Prediction...');
+
         const formData = new FormData();
         formData.append('file', file);
         
@@ -156,8 +156,7 @@
             });
             const res = await response.json();
             
-            console.log('✅ FACE PREDICTION RESULT:');
-            console.log(JSON.stringify(res, null, 2));
+
             
             const data = res.response;
             document.getElementById('swafotoPred').value = JSON.stringify(data);
@@ -170,8 +169,7 @@
     }
 
     async function predictText(text) {
-        console.log('📝 Starting Text Prediction...');
-        console.log('Input text:', text);
+
         
         try {
             const response = await fetch(API_TEXT_URL, {
@@ -183,8 +181,7 @@
             });
             const res = await response.json();
             
-            console.log('✅ TEXT PREDICTION RESULT:');
-            console.log(JSON.stringify(res, null, 2));
+
             
             const data = res.response;
             document.getElementById('catatanPred').value = JSON.stringify(data);
@@ -222,7 +219,7 @@
             stream.getTracks().forEach(track => track.stop());
 
             // Trigger Face Prediction immediately
-            console.log('📸 Photo captured! Running prediction...');
+
             await predictFace(file);
 
         }, 'image/jpeg');
@@ -342,11 +339,7 @@
             formData.append('catatan', perasaanValue); // Bagaimana perasaan
             formData.append('catatan_ket', ceritakanValue); // Ceritakan perasaan
             
-            console.log('Bagaimana perasaan (catatan):', perasaanValue);
-            console.log('Ceritakan perasaan (catatan_ket):', ceritakanValue);
-            
-            console.log('Sending form data...');
-            console.log(formData);
+
             // Send to Laravel Backend
             const response = await fetch('/siswa/presensi', {
                 method: 'POST',
@@ -357,27 +350,16 @@
                 body: formData
             });
 
-            console.log('Response received:', response);
-            const data = await response.json();
-            console.log('Response data:', data);
 
-            console.log(response.ok);
             
             // Log prediction results for development debugging
-            console.log('=== CHECKING FOR DEBUG DATA ===');
-            if (data.debug) {
-                console.log('✅ Debug data found!');
-                console.log('=== PREDICTION RESULTS FROM BACKEND ===');
-                console.log('Face Prediction:', data.debug.face_prediction);
-                console.log('Text Prediction:', data.debug.text_prediction);
-                console.log('========================================');
-            } else {
-                console.log('❌ No debug data in response');
-                console.log('Full response:', data);
-            }
+            // Log prediction results for development debugging
+            // if (data.debug) {
+            //      ...
+            // }
             
             if (response.ok) {
-                console.log('Success! Redirecting to dashboard...');
+
                 window.location.href = '/siswa/dashboard';
             } else {
                 throw new Error(data.message || 'Terjadi kesalahan saat mengirim absensi.');
