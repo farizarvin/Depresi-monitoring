@@ -12,7 +12,38 @@
 @endsection
 
 @section('content')
-    <div class="form-card">
+    {{-- Notifikasi Presensi Ditutup --}}
+    <div id="presensiClosedNotification" class="form-card" style="display: none;">
+        <div class="text-center py-5">
+            <i class="bi bi-clock-history" style="font-size: 4rem; color: #F59E0B;"></i>
+            <h3 class="mt-4 mb-3" style="color: #1F2937; font-weight: 600;">Presensi Tidak Tersedia</h3>
+            <p id="closedMessage" class="text-muted mb-4" style="font-size: 1rem;">
+                Saat ini berada di luar jam pembelajaran. Silakan kembali pada jam presensi yang telah ditentukan.
+            </p>
+            <div class="alert alert-warning d-inline-block" style="border-radius: 10px;">
+                <i class="bi bi-info-circle me-2"></i>
+                <span id="scheduleInfo">Presensi hanya tersedia pada jam pembelajaran aktif</span>
+            </div>
+            <div class="mt-4">
+                <a href="{{ route('siswa.dashboard') }}" class="btn btn-primary" style="border-radius: 10px; padding: 0.75rem 2rem;">
+                    <i class="bi bi-house me-2"></i>Kembali ke Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Loading State --}}
+    <div id="loadingState" class="form-card">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Mengecek jadwal presensi...</p>
+        </div>
+    </div>
+
+    {{-- Form Absensi (hidden by default until schedule check passes) --}}
+    <div id="absensiFormContainer" class="form-card" style="display: none;">
         <div class="form-header">
             <h2 class="form-title">Form Absensi Hari Ini</h2>
             <p class="form-date" id="currentDate">Minggu, 16 November 2025</p>
@@ -76,6 +107,58 @@
 
 @section('scripts')
 <script>
+    // Check Schedule on Page Load
+    async function checkPresensiSchedule() {
+        const loadingState = document.getElementById('loadingState');
+        const formContainer = document.getElementById('absensiFormContainer');
+        const closedNotification = document.getElementById('presensiClosedNotification');
+        const closedMessage = document.getElementById('closedMessage');
+        const scheduleInfo = document.getElementById('scheduleInfo');
+        
+        try {
+            const response = await fetch('/api/siswa/presensi', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')?.value || ''
+                }
+            });
+            
+            const data = await response.json();
+            
+            // Hide loading state
+            loadingState.style.display = 'none';
+            
+            if (response.ok && data.data?.is_open) {
+                // Schedule is open, show form
+                formContainer.style.display = 'block';
+            } else {
+                // Schedule is closed, show notification
+                closedNotification.style.display = 'block';
+                
+                // Customize message based on error
+                if (data.err) {
+                    if (data.err.includes('Hari libur') || data.err.includes('libur')) {
+                        closedMessage.textContent = 'Hari ini adalah hari libur. Presensi tidak tersedia.';
+                        scheduleInfo.textContent = 'Presensi akan tersedia kembali pada hari sekolah aktif';
+                    } else if (data.err.includes('ditutup') || data.err.includes('Presensi sudah ditutup')) {
+                        closedMessage.textContent = 'Saat ini berada di luar jam pembelajaran. Silakan kembali pada jam presensi yang telah ditentukan.';
+                        scheduleInfo.textContent = 'Presensi hanya tersedia pada jam pembelajaran aktif';
+                    } else {
+                        closedMessage.textContent = data.err;
+                    }
+                }
+            }
+        } catch (error) {
+            // On error, show the form anyway (fail-safe)
+            loadingState.style.display = 'none';
+            formContainer.style.display = 'block';
+        }
+    }
+    
+    // Run schedule check on page load
+    document.addEventListener('DOMContentLoaded', checkPresensiSchedule);
+
     // Status Change Handler
     const statusRadios = document.querySelectorAll('input[name="status"]');
     const formIzin = document.getElementById('formIzin');
